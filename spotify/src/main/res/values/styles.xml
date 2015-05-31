@@ -1,0 +1,19 @@
+<resources>
+    <!-- Referenced a lot of the stuff from here -->
+    <!-- https://android.googlesource.com/platform/frameworks/base/+/refs/heads/master/core/res/res/values/styles.xml -->
+    <style name="Button" parent="android:Widget.ActionButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_marginTop">@dimen/element_spacing_small</item>
+        <item name="android:layout_marginBottom">@dimen/element_spacing_small</item>
+        <item name="android:background">@drawable/btn_borderless</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+    <style name="SubHeaderAppearance" parent="@android:style/TextAppearance">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
+    </style>
+</resources>

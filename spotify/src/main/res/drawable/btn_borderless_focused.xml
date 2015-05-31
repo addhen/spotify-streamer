@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Used the tutorial here: http://developer.android.com/guide/topics/resources/drawable-resource.html#StateList -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <shape xmlns:android="http://schemas.android.com/apk/res/android">
+        <solid android:color="@color/red_dark"/>
+        <stroke android:width="2dp"
+                android:color="@color/red_light"/>
+    </shape>
+</selector>
