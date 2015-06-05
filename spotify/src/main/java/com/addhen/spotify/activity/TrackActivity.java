@@ -1,7 +1,7 @@
 package com.addhen.spotify.activity;
 
 import com.addhen.spotify.R;
-import com.addhen.spotify.fragment.ArtistFragment;
+import com.addhen.spotify.fragment.TrackFragment;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -10,16 +10,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+public class TrackActivity extends AppCompatActivity {
 
-    private ArtistFragment mArtistFragment;
+    private TrackFragment mTrackFragment;
+
+    public static final String EXTRA_ARTIST_ID = "artist_id";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        mArtistFragment = ArtistFragment.newInstance();
-        addFragment(R.id.add_fragment_container, mArtistFragment);
+        setContentView(R.layout.activity_track);
+        mTrackFragment = TrackFragment.newInstance();
+        addFragment(R.id.add_fragment_container, mTrackFragment);
     }
 
     @Override

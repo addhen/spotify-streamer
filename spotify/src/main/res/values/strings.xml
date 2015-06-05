@@ -2,7 +2,7 @@
     <string name="app_name">Spotify Streamer</string>
     <string name="action_settings">Settings</string>
     <string name="action_search">Search for artist</string>
-    <string name="action_search_hint">Search by typing an artist in the search field</string>
-    <string name="empty_list_artist">No artist found.
-    </string>
+    <string name="action_search_hint">Type an artist name to search.</string>
+    <string name="empty_list_artist">No artists found.</string>
+    <string name="empty_list_track">No tracks found.</string>
 </resources>

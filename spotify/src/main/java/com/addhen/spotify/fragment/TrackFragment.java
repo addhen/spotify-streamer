@@ -1,10 +1,10 @@
 package com.addhen.spotify.fragment;
 
 import com.addhen.spotify.R;
-import com.addhen.spotify.adapter.ArtistRecyclerViewAdapter;
-import com.addhen.spotify.model.ArtistModel;
-import com.addhen.spotify.presenter.ArtistPresenter;
-import com.addhen.spotify.view.ArtistView;
+import com.addhen.spotify.adapter.TrackRecyclerViewAdapter;
+import com.addhen.spotify.model.TrackModel;
+import com.addhen.spotify.presenter.TrackPresenter;
+import com.addhen.spotify.view.TrackView;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -15,22 +15,20 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.List;
 
-public class ArtistFragment extends Fragment implements ArtistView {
+public class TrackFragment extends Fragment implements TrackView {
 
-    private ArtistPresenter mArtistPresenter;
+    private TrackPresenter mTrackPresenter;
 
-    private ArtistRecyclerViewAdapter mArtistRecyclerViewAdapter;
+    private TrackRecyclerViewAdapter mTrackRecyclerViewAdapter;
 
     private TextView mEmptyView;
 
-    public static ArtistFragment newInstance() {
-        ArtistFragment fragment = new ArtistFragment();
+    public static TrackFragment newInstance() {
+        TrackFragment fragment = new TrackFragment();
         return fragment;
     }
 
@@ -38,39 +36,29 @@ public class ArtistFragment extends Fragment implements ArtistView {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ArtistFragment() {
+    public TrackFragment() {
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mArtistPresenter.setView(this);
+        mTrackPresenter.setView(this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_artist_list, container, false);
-        mArtistPresenter = new ArtistPresenter();
-        final EditText searchField = (EditText) view.findViewById(R.id.searchBar);
-        ImageButton searchBtn = (ImageButton) view.findViewById(R.id.searchIcon);
-        searchBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final String artistName = searchField.getText().toString();
-                mArtistPresenter.searchArtist(artistName);
-            }
-        });
+        View view = inflater.inflate(R.layout.fragment_track_list, container, false);
+        mTrackPresenter = new TrackPresenter();
         mEmptyView = (TextView) view.findViewById(R.id.empty_list_view);
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.artistRecyclerView);
-
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.trackRecyclerView);
         setRecyclerView(recyclerView);
         return view;
     }
 
     private void setRecyclerView(RecyclerView recyclerView) {
-        mArtistRecyclerViewAdapter = new ArtistRecyclerViewAdapter(getActivity().getApplication());
-        mArtistRecyclerViewAdapter.registerAdapterDataObserver(
+        mTrackRecyclerViewAdapter = new TrackRecyclerViewAdapter(getActivity().getApplication());
+        mTrackRecyclerViewAdapter.registerAdapterDataObserver(
                 new RecyclerView.AdapterDataObserver() {
                     @Override
                     public void onChanged() {
@@ -103,13 +91,13 @@ public class ArtistFragment extends Fragment implements ArtistView {
                     }
                 });
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
-        recyclerView.setAdapter(mArtistRecyclerViewAdapter);
+        recyclerView.setAdapter(mTrackRecyclerViewAdapter);
         setEmptyText();
     }
 
     private void setEmptyText() {
-        if ((mArtistRecyclerViewAdapter == null
-                || mArtistRecyclerViewAdapter.getItemCount() == 0)) {
+        if ((mTrackRecyclerViewAdapter == null
+                || mTrackRecyclerViewAdapter.getItemCount() == 0)) {
             mEmptyView.setVisibility(View.VISIBLE);
         } else {
             mEmptyView.setVisibility(View.GONE);
@@ -117,11 +105,11 @@ public class ArtistFragment extends Fragment implements ArtistView {
     }
 
     @Override
-    public void showArtists(final List<ArtistModel> artistList) {
+    public void showTracks(final List<TrackModel> trackList) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mArtistRecyclerViewAdapter.setAdapterItems(artistList);
+                mTrackRecyclerViewAdapter.setAdapterItems(trackList);
             }
         });
 

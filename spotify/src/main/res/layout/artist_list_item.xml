@@ -6,19 +6,21 @@
                 android:padding="@dimen/element_spacing_small">
 
     <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/photo_width"
+            android:layout_height="@dimen/photo_height"
             android:id="@+id/coverPhoto"
             android:layout_alignParentTop="true"
             android:layout_alignParentStart="true"
+            android:paddingRight="@dimen/element_spacing_small"
             android:src="@mipmap/ic_launcher"/>
-    <EditText
-            android:layout_width="match_parent"
+    <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
+            style="@style/TextAppearance.AppCompat.Large"
             android:text="Name"
             android:ems="10"
             android:id="@+id/artistName"
-            android:layout_alignParentTop="true"
-            android:layout_toEndOf="@+id/coverPhoto"/>
+            android:layout_alignParentTop="true" android:layout_toEndOf="@+id/coverPhoto"
+            android:focusable="true"/>
 </RelativeLayout>

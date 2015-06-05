@@ -1,18 +1,32 @@
 package com.addhen.spotify.presenter;
 
-import com.addhen.spotify.common.SpotifyServices;
+import com.addhen.spotify.model.mapper.ArtistModelMapper;
+import com.addhen.spotify.view.ArtistView;
 
+import android.support.annotation.NonNull;
+
+import java.util.List;
+
+import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.models.Artist;
+import kaaes.spotify.webapi.android.models.ArtistsPager;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class ArtistPresenter implements Presenter {
 
-    private SpotifyService mSpotify;
+    private ArtistView mArtistView;
 
-    private SpotifyServices mSpotifyServices;
+    private ArtistModelMapper mArtistModelMapper;
 
     public ArtistPresenter() {
-        mSpotifyServices = new SpotifyServices();
-        mSpotify = mSpotifyServices.getSpotify();
+        mArtistModelMapper = new ArtistModelMapper();
+    }
+
+    public void setView(@NonNull ArtistView view) {
+        mArtistView = view;
     }
 
     @Override
@@ -26,6 +40,19 @@ public class ArtistPresenter implements Presenter {
     }
 
     public void searchArtist(String name) {
-        // TODO: Use spotify's API to search for the artist.
+        SpotifyApi api = new SpotifyApi();
+        SpotifyService spotify = api.getService();
+        spotify.searchArtists(name, new Callback<ArtistsPager>() {
+            @Override
+            public void success(ArtistsPager artistsPager, Response response) {
+                final List<Artist> artists = artistsPager.artists.items;
+                mArtistView.showArtists(mArtistModelMapper.map(artists));
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                mArtistView.showError(error.getMessage());
+            }
+        });
     }
 }

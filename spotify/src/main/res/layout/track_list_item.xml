@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/element_spacing_small">
+
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/coverPhoto"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:src="@mipmap/ic_launcher"/>
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="The scientist"
+            android:id="@+id/trackName"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/coverPhoto"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="A rush of blood to the head"
+            android:id="@+id/albumName"
+            android:layout_below="@+id/trackName"
+            android:layout_toEndOf="@+id/coverPhoto"/>
+</RelativeLayout>

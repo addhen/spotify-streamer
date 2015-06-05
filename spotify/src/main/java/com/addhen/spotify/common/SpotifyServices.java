@@ -8,7 +8,7 @@ import retrofit.RestAdapter;
 
 public class SpotifyServices {
 
-    // TODO: Provide the accessToke at build time
+    // TODO: Provide the accessToken at build time
     final String accessToken = "";
 
     public SpotifyService getSpotify() {

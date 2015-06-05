@@ -1,19 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context="com.addhen.spotify.fragment.ArtistFragment">
-
-    <ListView
-            android:id="@android:id/list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-    <TextView
-            android:id="@android:id/empty"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/activity_vertical_margin"
+                android:layout_marginStart="@dimen/activity_vertical_margin"
+                android:layout_marginRight="@dimen/activity_vertical_margin"
+                android:layout_marginEnd="@dimen/activity_vertical_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                tools:context="com.addhen.spotify.fragment.ArtistFragment">
+    <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/searchBar"
+            android:hint="@string/action_search_hint"
+            android:ems="10"
+            android:layout_marginBottom="@dimen/element_spacing_small"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@+id/searchIcon"/>
+    <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/searchIcon"
+            android:src="@drawable/abc_ic_search_api_mtrl_alpha"
+            android:layout_alignBottom="@+id/searchBar"
+            android:layout_alignParentEnd="true"/>
+    <android.support.v7.widget.RecyclerView
+            android:id="@+id/artistRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"/>
+            android:layout_below="@+id/searchBar"/>
 
-</FrameLayout>
+    <TextView
+            android:id="@+id/empty_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/empty_list_artist"
+            android:visibility="gone"
+            android:gravity="center"
+            android:layout_below="@+id/searchBar"
+            android:layout_alignParentStart="true"/>
+</RelativeLayout>
