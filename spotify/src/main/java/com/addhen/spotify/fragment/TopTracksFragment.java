@@ -9,12 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class ArtistFragment extends Fragment {
+public class TopTracksFragment extends Fragment {
 
     private ArtistPresenter mArtistPresenter;
 
-    public static ArtistFragment newInstance() {
-        ArtistFragment fragment = new ArtistFragment();
+    public static TopTracksFragment newInstance() {
+        TopTracksFragment fragment = new TopTracksFragment();
         return fragment;
     }
 
@@ -22,7 +22,7 @@ public class ArtistFragment extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ArtistFragment() {
+    public TopTracksFragment() {
     }
 
     @Override

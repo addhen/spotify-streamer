@@ -16,8 +16,7 @@ import android.view.MenuItem;
 import android.widget.SearchView;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity
-        implements ArtistFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity {
 
     private ArtistFragment mArtistFragment;
 
@@ -114,10 +113,5 @@ public class MainActivity extends AppCompatActivity
 
     private void performArtistSearch(String artistName) {
         Toast.makeText(this, "Artist " + artistName + " not found", Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void onArtistClicked(String id) {
-        Toast.makeText(this, "Selected: " + id, Toast.LENGTH_LONG).show();
     }
 }
