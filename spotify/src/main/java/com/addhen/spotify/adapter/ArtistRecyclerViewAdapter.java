@@ -58,6 +58,7 @@ public class ArtistRecyclerViewAdapter
         holder.mArtistName.setText(mArtistList.get(position).name);
         Picasso.with(holder.mCoverPhoto.getContext())
                 .load(mArtistList.get(position).coverPhoto)
+                .placeholder(R.mipmap.ic_launcher)
                 .into(holder.mCoverPhoto);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {

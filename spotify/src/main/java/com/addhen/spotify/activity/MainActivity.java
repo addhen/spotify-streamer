@@ -4,7 +4,6 @@ import com.addhen.spotify.R;
 import com.addhen.spotify.fragment.ArtistFragment;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -21,8 +20,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        FragmentManager fm = getFragmentManager();
-        mArtistFragment = (ArtistFragment) fm.findFragmentByTag(FRAG_TAG);
+        mArtistFragment = (ArtistFragment) getFragmentManager().findFragmentByTag(FRAG_TAG);
         if (mArtistFragment == null) {
             mArtistFragment = ArtistFragment.newInstance();
             addFragment(R.id.add_fragment_container, mArtistFragment, FRAG_TAG);

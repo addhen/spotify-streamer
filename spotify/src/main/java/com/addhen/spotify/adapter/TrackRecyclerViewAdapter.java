@@ -57,6 +57,7 @@ public class TrackRecyclerViewAdapter
         holder.mAlbumName.setText(mTrackList.get(position).album);
         Picasso.with(holder.mCoverPhoto.getContext())
                 .load(mTrackList.get(position).coverPhoto)
+                .placeholder(R.mipmap.ic_launcher)
                 .into(holder.mCoverPhoto);
     }
 

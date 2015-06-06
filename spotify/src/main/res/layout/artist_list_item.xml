@@ -14,13 +14,13 @@
             android:paddingRight="@dimen/element_spacing_small"
             android:src="@mipmap/ic_launcher"/>
     <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
             style="@style/TextAppearance.AppCompat.Large"
+            android:layout_marginTop="20dp"
             android:text="Name"
             android:ems="10"
             android:id="@+id/artistName"
-            android:layout_alignParentTop="true" android:layout_toEndOf="@+id/coverPhoto"
-            android:focusable="true"/>
+            android:layout_toRightOf="@+id/coverPhoto"/>
 </RelativeLayout>

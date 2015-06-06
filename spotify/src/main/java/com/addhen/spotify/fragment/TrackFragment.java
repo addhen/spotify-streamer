@@ -16,6 +16,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.List;
@@ -31,6 +32,12 @@ public class TrackFragment extends Fragment implements TrackView {
     private TextView mEmptyView;
 
     private List<TrackModel> mTrackList;
+
+    private RecyclerView mRecyclerView;
+
+    private ProgressBar mProgressBar;
+
+    private String mArtistId;
 
     public static TrackFragment newInstance(String artistId) {
         TrackFragment fragment = new TrackFragment();
@@ -51,7 +58,9 @@ public class TrackFragment extends Fragment implements TrackView {
         super.onActivityCreated(savedInstanceState);
         mTrackPresenter.setView(this);
         final String artistId = getArguments().getString(ARGUMENT_KEY_ARTIST_ID);
-        mTrackPresenter.setTrack(artistId);
+        if (Util.isEmpty(mTrackList)) {
+            mTrackPresenter.setTrack(artistId);
+        }
     }
 
     @Override
@@ -72,8 +81,9 @@ public class TrackFragment extends Fragment implements TrackView {
         View view = inflater.inflate(R.layout.fragment_track_list, container, false);
         mTrackPresenter = new TrackPresenter();
         mEmptyView = (TextView) view.findViewById(R.id.empty_list_view);
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.trackRecyclerView);
-        setRecyclerView(recyclerView);
+        mProgressBar = (ProgressBar) view.findViewById(R.id.trackProgress);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.trackRecyclerView);
+        setRecyclerView(mRecyclerView);
         return view;
     }
 
@@ -150,17 +160,23 @@ public class TrackFragment extends Fragment implements TrackView {
 
     @Override
     public void showError(String message) {
-        Snackbar.make(null, message, Snackbar.LENGTH_LONG);
+        Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_LONG).show();
     }
 
     @Override
     public void loading() {
-
+        mEmptyView.setVisibility(View.GONE);
+        mProgressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideLoading() {
-
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mProgressBar.setVisibility(View.GONE);
+            }
+        });
     }
 
     @Override

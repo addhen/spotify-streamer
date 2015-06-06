@@ -68,6 +68,7 @@ public class ArtistFragment extends Fragment implements ArtistView {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH
                         || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+                    searchField.clearFocus();
                     final String artistName = searchField.getText().toString();
                     mArtistPresenter.searchArtist(artistName);
                     return true;
@@ -80,7 +81,7 @@ public class ArtistFragment extends Fragment implements ArtistView {
         mProgressBar = (ProgressBar) view.findViewById(R.id.artistSearchProgress);
         setRecyclerView(mRecyclerView);
 
-        ImageButton clearBtn = (ImageButton) view.findViewById(R.id.searchIcon);
+        ImageButton clearBtn = (ImageButton) view.findViewById(R.id.clearSearchIcon);
         clearBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -173,6 +174,7 @@ public class ArtistFragment extends Fragment implements ArtistView {
 
     @Override
     public void loading() {
+        mEmptyView.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.VISIBLE);
     }
 
@@ -185,7 +187,6 @@ public class ArtistFragment extends Fragment implements ArtistView {
             }
         });
     }
-
 
     @Override
     public Context getAppContext() {

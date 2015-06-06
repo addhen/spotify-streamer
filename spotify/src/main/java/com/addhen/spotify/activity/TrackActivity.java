@@ -29,6 +29,7 @@ public class TrackActivity extends AppCompatActivity {
         mArtistId = getIntent().getStringExtra(INTENT_EXTRA_ARTIST_ID);
         final String artistName = getIntent().getStringExtra(INTENT_EXTRA_ARTIST_NAME);
         setActionbarTitle(artistName);
+        mTrackFragment = (TrackFragment) getFragmentManager().findFragmentByTag(FRAG_TAG);
         if (mTrackFragment == null) {
             mTrackFragment = TrackFragment.newInstance(mArtistId);
             addFragment(R.id.add_fragment_container, mTrackFragment, FRAG_TAG);

@@ -46,15 +46,18 @@ public class TrackPresenter implements Presenter {
         SpotifyService spotify = api.getService();
         Map<String, Object> options = new HashMap<>();
         options.put("country", "US");
+        mTrackView.loading();
         spotify.getArtistTopTrack(artistId, options, new Callback<Tracks>() {
             @Override
             public void success(Tracks t, Response response) {
                 final List<Track> trackList = t.tracks;
+                mTrackView.hideLoading();
                 mTrackView.showTracks(mTrackModelMapper.map(trackList));
             }
 
             @Override
             public void failure(RetrofitError error) {
+                mTrackView.hideLoading();
                 mTrackView.showError(error.getMessage());
             }
         });
