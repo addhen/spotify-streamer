@@ -1,12 +1,10 @@
 package com.addhen.spotify.adapter;
 
 import com.addhen.spotify.R;
-import com.addhen.spotify.activity.TrackActivity;
 import com.addhen.spotify.model.TrackModel;
 import com.squareup.picasso.Picasso;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -33,10 +31,6 @@ public class TrackRecyclerViewAdapter
         mTrackList = new ArrayList<>();
     }
 
-    public TrackModel getValueAt(int position) {
-        return mTrackList.get(position);
-    }
-
     public void setAdapterItems(List<TrackModel> trackList) {
         mTrackList.clear();
         mTrackList.addAll(trackList);
@@ -61,20 +55,9 @@ public class TrackRecyclerViewAdapter
         holder.trackId = mTrackList.get(position)._id;
         holder.mTrackName.setText(mTrackList.get(position).name);
         holder.mAlbumName.setText(mTrackList.get(position).album);
-        // TODO: Replace launcher icon with one from the api
         Picasso.with(holder.mCoverPhoto.getContext())
                 .load(mTrackList.get(position).coverPhoto)
                 .into(holder.mCoverPhoto);
-
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Context context = v.getContext();
-                Intent intent = new Intent(context, TrackActivity.class);
-                intent.putExtra(TrackActivity.INTENT_EXTRA_ARTIST_ID, holder.trackId);
-                context.startActivity(intent);
-            }
-        });
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

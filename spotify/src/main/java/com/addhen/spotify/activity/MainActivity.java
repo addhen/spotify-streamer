@@ -15,9 +15,6 @@ public class MainActivity extends AppCompatActivity {
 
     private ArtistFragment mArtistFragment;
 
-    public static final String INSTANCE_STATE_PARAM_ARTIST_ID
-            = "com.addhen.spotify.STATE_PARAM_ARTIST_ID";
-
     private static final String FRAG_TAG = "artist";
 
     @Override

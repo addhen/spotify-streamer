@@ -15,15 +15,18 @@
             android:id="@+id/searchBar"
             android:hint="@string/action_search_hint"
             android:ems="10"
+            android:imeOptions="actionSearch"
+            android:inputType="textAutoComplete"
             android:layout_marginBottom="@dimen/element_spacing_small"
             android:layout_alignParentTop="true"
             android:layout_alignParentStart="true"
             android:layout_toStartOf="@+id/searchIcon"/>
     <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/search_icon_width"
+            android:layout_height="@dimen/search_icon_height"
             android:id="@+id/searchIcon"
-            android:src="@drawable/abc_ic_search_api_mtrl_alpha"
+            android:src="@drawable/ic_search"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_alignBottom="@+id/searchBar"
             android:layout_alignParentEnd="true"/>
     <android.support.v7.widget.RecyclerView
@@ -31,7 +34,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/searchBar"/>
-
+    <ProgressBar
+            android:id="@+id/artistSearchProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_centerInParent="true"/>
     <TextView
             android:id="@+id/empty_list_view"
             android:layout_width="match_parent"

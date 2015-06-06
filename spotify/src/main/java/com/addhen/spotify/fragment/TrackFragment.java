@@ -4,6 +4,7 @@ import com.addhen.spotify.R;
 import com.addhen.spotify.adapter.TrackRecyclerViewAdapter;
 import com.addhen.spotify.model.TrackModel;
 import com.addhen.spotify.presenter.TrackPresenter;
+import com.addhen.spotify.util.Util;
 import com.addhen.spotify.view.TrackView;
 
 import android.app.Fragment;
@@ -29,6 +30,8 @@ public class TrackFragment extends Fragment implements TrackView {
 
     private TextView mEmptyView;
 
+    private List<TrackModel> mTrackList;
+
     public static TrackFragment newInstance(String artistId) {
         TrackFragment fragment = new TrackFragment();
         Bundle bundle = new Bundle();
@@ -37,11 +40,10 @@ public class TrackFragment extends Fragment implements TrackView {
         return fragment;
     }
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public TrackFragment() {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
     @Override
@@ -111,6 +113,9 @@ public class TrackFragment extends Fragment implements TrackView {
                 });
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
         recyclerView.setAdapter(mTrackRecyclerViewAdapter);
+        if (!Util.isEmpty(mTrackList)) {
+            mTrackRecyclerViewAdapter.setAdapterItems(mTrackList);
+        }
         setEmptyText();
     }
 
@@ -125,6 +130,7 @@ public class TrackFragment extends Fragment implements TrackView {
 
     @Override
     public void showTracks(final List<TrackModel> trackList) {
+        mTrackList = trackList;
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -134,9 +140,27 @@ public class TrackFragment extends Fragment implements TrackView {
 
     }
 
+    public void setTrackList(final List<TrackModel> trackList) {
+        mTrackList = trackList;
+    }
+
+    public List<TrackModel> getTrackList() {
+        return mTrackList;
+    }
+
     @Override
     public void showError(String message) {
         Snackbar.make(null, message, Snackbar.LENGTH_LONG);
+    }
+
+    @Override
+    public void loading() {
+
+    }
+
+    @Override
+    public void hideLoading() {
+
     }
 
     @Override

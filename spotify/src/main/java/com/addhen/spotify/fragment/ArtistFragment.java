@@ -13,11 +13,14 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.List;
@@ -31,6 +34,10 @@ public class ArtistFragment extends Fragment implements ArtistView {
     private TextView mEmptyView;
 
     private List<ArtistModel> mArtistList;
+
+    private RecyclerView mRecyclerView;
+
+    private ProgressBar mProgressBar;
 
     public static ArtistFragment newInstance() {
         ArtistFragment fragment = new ArtistFragment();
@@ -56,17 +63,35 @@ public class ArtistFragment extends Fragment implements ArtistView {
         View view = inflater.inflate(R.layout.fragment_artist_list, container, false);
         mArtistPresenter = new ArtistPresenter();
         final EditText searchField = (EditText) view.findViewById(R.id.searchBar);
-        ImageButton searchBtn = (ImageButton) view.findViewById(R.id.searchIcon);
-        searchBtn.setOnClickListener(new View.OnClickListener() {
+        searchField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public void onClick(View v) {
-                final String artistName = searchField.getText().toString();
-                mArtistPresenter.searchArtist(artistName);
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH
+                        || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+                    final String artistName = searchField.getText().toString();
+                    mArtistPresenter.searchArtist(artistName);
+                    return true;
+                }
+                return false;
             }
         });
         mEmptyView = (TextView) view.findViewById(R.id.empty_list_view);
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.artistRecyclerView);
-        setRecyclerView(recyclerView);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.artistRecyclerView);
+        mProgressBar = (ProgressBar) view.findViewById(R.id.artistSearchProgress);
+        setRecyclerView(mRecyclerView);
+
+        ImageButton clearBtn = (ImageButton) view.findViewById(R.id.searchIcon);
+        clearBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchField.setText(null);
+                searchField.requestFocus();
+                if (!Util.isEmpty(mArtistList)) {
+                    mArtistList.clear();
+                    mArtistRecyclerViewAdapter.setAdapterItems(mArtistList);
+                }
+            }
+        });
         return view;
     }
 
@@ -143,8 +168,24 @@ public class ArtistFragment extends Fragment implements ArtistView {
 
     @Override
     public void showError(String message) {
-        Snackbar.make(null, message, Snackbar.LENGTH_LONG);
+        Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_LONG).show();
     }
+
+    @Override
+    public void loading() {
+        mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideLoading() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mProgressBar.setVisibility(View.GONE);
+            }
+        });
+    }
+
 
     @Override
     public Context getAppContext() {

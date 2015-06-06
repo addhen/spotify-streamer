@@ -5,4 +5,5 @@
     <string name="action_search_hint">Type an artist name to search.</string>
     <string name="empty_list_artist">No artists found.</string>
     <string name="empty_list_track">No tracks found.</string>
+    <string name="ab_title_track">Top 10 Tracks</string>
 </resources>

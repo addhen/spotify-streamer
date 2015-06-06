@@ -33,10 +33,6 @@ public class ArtistRecyclerViewAdapter
         mArtistList = new ArrayList<>();
     }
 
-    public ArtistModel getValueAt(int position) {
-        return mArtistList.get(position);
-    }
-
     public void setAdapterItems(List<ArtistModel> artistList) {
         mArtistList.clear();
         mArtistList.addAll(artistList);
@@ -59,10 +55,10 @@ public class ArtistRecyclerViewAdapter
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.artistId = mArtistList.get(position)._id;
-        holder.mTextView.setText(mArtistList.get(position).name);
-        Picasso.with(holder.mImageView.getContext())
+        holder.mArtistName.setText(mArtistList.get(position).name);
+        Picasso.with(holder.mCoverPhoto.getContext())
                 .load(mArtistList.get(position).coverPhoto)
-                .into(holder.mImageView);
+                .into(holder.mCoverPhoto);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,6 +66,8 @@ public class ArtistRecyclerViewAdapter
                 Context context = v.getContext();
                 Intent intent = new Intent(context, TrackActivity.class);
                 intent.putExtra(TrackActivity.INTENT_EXTRA_ARTIST_ID, holder.artistId);
+                intent.putExtra(TrackActivity.INTENT_EXTRA_ARTIST_NAME,
+                        holder.mArtistName.getText().toString());
                 context.startActivity(intent);
             }
         });
@@ -81,20 +79,20 @@ public class ArtistRecyclerViewAdapter
 
         public final View mView;
 
-        public final ImageView mImageView;
+        public final ImageView mCoverPhoto;
 
-        public final TextView mTextView;
+        public final TextView mArtistName;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mImageView = (ImageView) view.findViewById(R.id.coverPhoto);
-            mTextView = (TextView) view.findViewById(R.id.artistName);
+            mCoverPhoto = (ImageView) view.findViewById(R.id.coverPhoto);
+            mArtistName = (TextView) view.findViewById(R.id.artistName);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mTextView.getText();
+            return super.toString() + " '" + mArtistName.getText();
         }
     }
 }

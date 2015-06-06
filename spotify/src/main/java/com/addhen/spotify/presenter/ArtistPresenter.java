@@ -42,15 +42,18 @@ public class ArtistPresenter implements Presenter {
     public void searchArtist(String name) {
         SpotifyApi api = new SpotifyApi();
         SpotifyService spotify = api.getService();
+        mArtistView.loading();
         spotify.searchArtists(name, new Callback<ArtistsPager>() {
             @Override
             public void success(ArtistsPager artistsPager, Response response) {
                 final List<Artist> artists = artistsPager.artists.items;
+                mArtistView.hideLoading();
                 mArtistView.showArtists(mArtistModelMapper.map(artists));
             }
 
             @Override
             public void failure(RetrofitError error) {
+                mArtistView.hideLoading();
                 mArtistView.showError(error.getMessage());
             }
         });

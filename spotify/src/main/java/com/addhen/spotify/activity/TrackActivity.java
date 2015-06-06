@@ -14,31 +14,32 @@ public class TrackActivity extends AppCompatActivity {
 
     public static final String INTENT_EXTRA_ARTIST_ID = "com.addhen.spotify.INTENT_PARAM_ARTIST_ID";
 
-    public static final String INSTANCE_STATE_PARAM_ARTIST_ID
-            = "com.addhen.spotify.STATE_PARAM_ARTIST_ID";
+    public static final String INTENT_EXTRA_ARTIST_NAME = "com.addhen.spotify.INTENT_ARTIST_NAME";
 
     private String mArtistId;
+
+    private static final String FRAG_TAG = "track";
+
+    private TrackFragment mTrackFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_track);
-        if (savedInstanceState == null) {
-            mArtistId = getIntent().getStringExtra(INTENT_EXTRA_ARTIST_ID);
-            addFragment(R.id.add_fragment_container, TrackFragment.newInstance(mArtistId));
-        } else {
-            mArtistId = savedInstanceState.getString(INSTANCE_STATE_PARAM_ARTIST_ID);
+        mArtistId = getIntent().getStringExtra(INTENT_EXTRA_ARTIST_ID);
+        final String artistName = getIntent().getStringExtra(INTENT_EXTRA_ARTIST_NAME);
+        setActionbarTitle(artistName);
+        if (mTrackFragment == null) {
+            mTrackFragment = TrackFragment.newInstance(mArtistId);
+            addFragment(R.id.add_fragment_container, mTrackFragment, FRAG_TAG);
         }
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        if (outState != null) {
-            outState.putString(INSTANCE_STATE_PARAM_ARTIST_ID, mArtistId);
-        }
-        super.onSaveInstanceState(outState);
+    public void onDestroy() {
+        super.onDestroy();
+        mTrackFragment.setTrackList(mTrackFragment.getTrackList());
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -55,10 +56,17 @@ public class TrackActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void addFragment(int containerViewId, Fragment fragment) {
+    private void setActionbarTitle(String title) {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(R.string.ab_title_track);
+            getSupportActionBar().setSubtitle(title);
+        }
+    }
+
+    private void addFragment(int containerViewId, Fragment fragment, String tag) {
         FragmentTransaction fragmentTransaction = this.getFragmentManager()
                 .beginTransaction();
-        fragmentTransaction.add(containerViewId, fragment);
+        fragmentTransaction.add(containerViewId, fragment, tag);
         fragmentTransaction.commit();
     }
 }
