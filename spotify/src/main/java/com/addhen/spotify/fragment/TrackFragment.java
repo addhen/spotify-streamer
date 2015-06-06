@@ -21,14 +21,19 @@ import java.util.List;
 
 public class TrackFragment extends Fragment implements TrackView {
 
+    private static final String ARGUMENT_KEY_ARTIST_ID = "com.addhen.spotify.ARGUMENT_ARTIST_ID";
+
     private TrackPresenter mTrackPresenter;
 
     private TrackRecyclerViewAdapter mTrackRecyclerViewAdapter;
 
     private TextView mEmptyView;
 
-    public static TrackFragment newInstance() {
+    public static TrackFragment newInstance(String artistId) {
         TrackFragment fragment = new TrackFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(ARGUMENT_KEY_ARTIST_ID, artistId);
+        fragment.setArguments(bundle);
         return fragment;
     }
 
@@ -43,6 +48,20 @@ public class TrackFragment extends Fragment implements TrackView {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mTrackPresenter.setView(this);
+        final String artistId = getArguments().getString(ARGUMENT_KEY_ARTIST_ID);
+        mTrackPresenter.setTrack(artistId);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mTrackPresenter.resume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mTrackPresenter.pause();
     }
 
     @Override

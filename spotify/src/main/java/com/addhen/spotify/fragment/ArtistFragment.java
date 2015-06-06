@@ -4,6 +4,7 @@ import com.addhen.spotify.R;
 import com.addhen.spotify.adapter.ArtistRecyclerViewAdapter;
 import com.addhen.spotify.model.ArtistModel;
 import com.addhen.spotify.presenter.ArtistPresenter;
+import com.addhen.spotify.util.Util;
 import com.addhen.spotify.view.ArtistView;
 
 import android.app.Fragment;
@@ -29,17 +30,19 @@ public class ArtistFragment extends Fragment implements ArtistView {
 
     private TextView mEmptyView;
 
+    private List<ArtistModel> mArtistList;
+
     public static ArtistFragment newInstance() {
         ArtistFragment fragment = new ArtistFragment();
         return fragment;
     }
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public ArtistFragment() {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
+
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -63,7 +66,6 @@ public class ArtistFragment extends Fragment implements ArtistView {
         });
         mEmptyView = (TextView) view.findViewById(R.id.empty_list_view);
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.artistRecyclerView);
-
         setRecyclerView(recyclerView);
         return view;
     }
@@ -104,6 +106,9 @@ public class ArtistFragment extends Fragment implements ArtistView {
                 });
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
         recyclerView.setAdapter(mArtistRecyclerViewAdapter);
+        if (!Util.isEmpty(mArtistList)) {
+            mArtistRecyclerViewAdapter.setAdapterItems(mArtistList);
+        }
         setEmptyText();
     }
 
@@ -118,6 +123,7 @@ public class ArtistFragment extends Fragment implements ArtistView {
 
     @Override
     public void showArtists(final List<ArtistModel> artistList) {
+        mArtistList = artistList;
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -125,6 +131,14 @@ public class ArtistFragment extends Fragment implements ArtistView {
             }
         });
 
+    }
+
+    public void setArtistList(final List<ArtistModel> artistList) {
+        mArtistList = artistList;
+    }
+
+    public List<ArtistModel> getArtistList() {
+        return mArtistList;
     }
 
     @Override

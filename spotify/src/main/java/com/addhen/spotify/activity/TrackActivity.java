@@ -12,17 +12,33 @@ import android.view.MenuItem;
 
 public class TrackActivity extends AppCompatActivity {
 
-    private TrackFragment mTrackFragment;
+    public static final String INTENT_EXTRA_ARTIST_ID = "com.addhen.spotify.INTENT_PARAM_ARTIST_ID";
 
-    public static final String EXTRA_ARTIST_ID = "artist_id";
+    public static final String INSTANCE_STATE_PARAM_ARTIST_ID
+            = "com.addhen.spotify.STATE_PARAM_ARTIST_ID";
+
+    private String mArtistId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_track);
-        mTrackFragment = TrackFragment.newInstance();
-        addFragment(R.id.add_fragment_container, mTrackFragment);
+        if (savedInstanceState == null) {
+            mArtistId = getIntent().getStringExtra(INTENT_EXTRA_ARTIST_ID);
+            addFragment(R.id.add_fragment_container, TrackFragment.newInstance(mArtistId));
+        } else {
+            mArtistId = savedInstanceState.getString(INSTANCE_STATE_PARAM_ARTIST_ID);
+        }
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (outState != null) {
+            outState.putString(INSTANCE_STATE_PARAM_ARTIST_ID, mArtistId);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -71,7 +71,7 @@ public class TrackRecyclerViewAdapter
             public void onClick(View v) {
                 Context context = v.getContext();
                 Intent intent = new Intent(context, TrackActivity.class);
-                intent.putExtra(TrackActivity.EXTRA_ARTIST_ID, holder.trackId);
+                intent.putExtra(TrackActivity.INTENT_EXTRA_ARTIST_ID, holder.trackId);
                 context.startActivity(intent);
             }
         });
