@@ -3,14 +3,9 @@ package com.addhen.spotify.activity;
 import com.addhen.spotify.R;
 import com.addhen.spotify.fragment.TrackFragment;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 
-public class TrackActivity extends AppCompatActivity {
+public class TrackActivity extends BaseActivity {
 
     public static final String INTENT_EXTRA_ARTIST_ID = "com.addhen.spotify.INTENT_PARAM_ARTIST_ID";
 
@@ -22,13 +17,16 @@ public class TrackActivity extends AppCompatActivity {
 
     private TrackFragment mTrackFragment;
 
+    public TrackActivity() {
+        super(R.layout.activity_main, R.menu.menu_main);
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_track);
         mArtistId = getIntent().getStringExtra(INTENT_EXTRA_ARTIST_ID);
         final String artistName = getIntent().getStringExtra(INTENT_EXTRA_ARTIST_NAME);
-        setActionbarTitle(artistName);
+        setSubTitle(artistName);
         mTrackFragment = (TrackFragment) getFragmentManager().findFragmentByTag(FRAG_TAG);
         if (mTrackFragment == null) {
             mTrackFragment = TrackFragment.newInstance(mArtistId);
@@ -40,34 +38,5 @@ public class TrackActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         mTrackFragment.setTrackList(mTrackFragment.getTrackList());
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        final int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void setActionbarTitle(String title) {
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(R.string.ab_title_track);
-            getSupportActionBar().setSubtitle(title);
-        }
-    }
-
-    private void addFragment(int containerViewId, Fragment fragment, String tag) {
-        FragmentTransaction fragmentTransaction = this.getFragmentManager()
-                .beginTransaction();
-        fragmentTransaction.add(containerViewId, fragment, tag);
-        fragmentTransaction.commit();
     }
 }

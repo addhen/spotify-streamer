@@ -7,21 +7,19 @@ import com.addhen.spotify.presenter.TrackPresenter;
 import com.addhen.spotify.util.Util;
 import com.addhen.spotify.view.TrackView;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.List;
 
-public class TrackFragment extends Fragment implements TrackView {
+import butterknife.InjectView;
+
+public class TrackFragment extends BaseFragment implements TrackView {
 
     private static final String ARGUMENT_KEY_ARTIST_ID = "com.addhen.spotify.ARGUMENT_ARTIST_ID";
 
@@ -29,15 +27,20 @@ public class TrackFragment extends Fragment implements TrackView {
 
     private TrackRecyclerViewAdapter mTrackRecyclerViewAdapter;
 
-    private TextView mEmptyView;
-
     private List<TrackModel> mTrackList;
 
-    private RecyclerView mRecyclerView;
+    @InjectView(R.id.empty_list_view)
+    TextView mEmptyView;
 
-    private ProgressBar mProgressBar;
+    @InjectView(R.id.trackRecyclerView)
+    RecyclerView mRecyclerView;
 
-    private String mArtistId;
+    @InjectView(R.id.trackProgress)
+    ProgressBar mProgressBar;
+
+    public TrackFragment() {
+        super(R.layout.fragment_track_list, 0);
+    }
 
     public static TrackFragment newInstance(String artistId) {
         TrackFragment fragment = new TrackFragment();
@@ -76,15 +79,10 @@ public class TrackFragment extends Fragment implements TrackView {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_track_list, container, false);
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         mTrackPresenter = new TrackPresenter();
-        mEmptyView = (TextView) view.findViewById(R.id.empty_list_view);
-        mProgressBar = (ProgressBar) view.findViewById(R.id.trackProgress);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.trackRecyclerView);
         setRecyclerView(mRecyclerView);
-        return view;
     }
 
     private void setRecyclerView(RecyclerView recyclerView) {
@@ -160,7 +158,7 @@ public class TrackFragment extends Fragment implements TrackView {
 
     @Override
     public void showError(String message) {
-        Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_LONG).show();
+        showSnabackar(mRecyclerView, message);
     }
 
     @Override

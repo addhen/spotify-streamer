@@ -7,49 +7,50 @@ import com.addhen.spotify.presenter.ArtistPresenter;
 import com.addhen.spotify.util.Util;
 import com.addhen.spotify.view.ArtistView;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.List;
 
-public class ArtistFragment extends Fragment implements ArtistView {
+import butterknife.InjectView;
+import butterknife.OnClick;
+
+public class ArtistFragment extends BaseFragment implements ArtistView {
 
     private ArtistPresenter mArtistPresenter;
 
     private ArtistRecyclerViewAdapter mArtistRecyclerViewAdapter;
 
-    private TextView mEmptyView;
+    @InjectView(R.id.empty_list_view)
+    TextView mEmptyView;
 
     private List<ArtistModel> mArtistList;
 
-    private RecyclerView mRecyclerView;
+    @InjectView(R.id.artistRecyclerView)
+    RecyclerView mRecyclerView;
 
-    private ProgressBar mProgressBar;
+    @InjectView(R.id.artistSearchProgress)
+    ProgressBar mProgressBar;
+
+    @InjectView(R.id.searchBar)
+    EditText mSearchField;
+
+    public ArtistFragment() {
+        super(R.layout.fragment_artist_list, 0);
+    }
 
     public static ArtistFragment newInstance() {
         ArtistFragment fragment = new ArtistFragment();
         return fragment;
     }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-    }
-
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -58,42 +59,23 @@ public class ArtistFragment extends Fragment implements ArtistView {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_artist_list, container, false);
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         mArtistPresenter = new ArtistPresenter();
-        final EditText searchField = (EditText) view.findViewById(R.id.searchBar);
-        searchField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mSearchField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH
                         || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                    searchField.clearFocus();
-                    final String artistName = searchField.getText().toString();
+                    mSearchField.clearFocus();
+                    final String artistName = mSearchField.getText().toString();
                     mArtistPresenter.searchArtist(artistName);
                     return true;
                 }
                 return false;
             }
         });
-        mEmptyView = (TextView) view.findViewById(R.id.empty_list_view);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.artistRecyclerView);
-        mProgressBar = (ProgressBar) view.findViewById(R.id.artistSearchProgress);
         setRecyclerView(mRecyclerView);
-
-        ImageButton clearBtn = (ImageButton) view.findViewById(R.id.clearSearchIcon);
-        clearBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                searchField.setText(null);
-                searchField.requestFocus();
-                if (!Util.isEmpty(mArtistList)) {
-                    mArtistList.clear();
-                    mArtistRecyclerViewAdapter.setAdapterItems(mArtistList);
-                }
-            }
-        });
-        return view;
     }
 
     private void setRecyclerView(RecyclerView recyclerView) {
@@ -138,6 +120,16 @@ public class ArtistFragment extends Fragment implements ArtistView {
         setEmptyText();
     }
 
+    @OnClick(R.id.clearSearchIcon)
+    void clearSearch() {
+        mSearchField.setText(null);
+        mSearchField.requestFocus();
+        if (!Util.isEmpty(mArtistList)) {
+            mArtistList.clear();
+            mArtistRecyclerViewAdapter.setAdapterItems(mArtistList);
+        }
+    }
+
     private void setEmptyText() {
         if ((mArtistRecyclerViewAdapter == null
                 || mArtistRecyclerViewAdapter.getItemCount() == 0)) {
@@ -169,7 +161,7 @@ public class ArtistFragment extends Fragment implements ArtistView {
 
     @Override
     public void showError(String message) {
-        Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_LONG).show();
+        showSnabackar(mRecyclerView, message);
     }
 
     @Override
