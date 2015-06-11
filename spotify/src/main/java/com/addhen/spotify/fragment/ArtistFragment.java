@@ -70,7 +70,7 @@ public class ArtistFragment extends BaseFragment implements ArtistView {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH
                         || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
                     mSearchField.clearFocus();
-                    //Hide the keyboard so the user can view the full list the searched artist
+                    //Hide the soft keyboard so the user can view the full list of searched artist
                     hideSoftKeyboard(mSearchField);
                     final String artistName = mSearchField.getText().toString();
                     mArtistPresenter.searchArtist(artistName);
