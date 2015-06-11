@@ -15,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -69,6 +70,8 @@ public class ArtistFragment extends BaseFragment implements ArtistView {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH
                         || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
                     mSearchField.clearFocus();
+                    //Hide the keyboard so the user can view the full list the searched artist
+                    hideSoftKeyboard(mSearchField);
                     final String artistName = mSearchField.getText().toString();
                     mArtistPresenter.searchArtist(artistName);
                     return true;
@@ -145,5 +148,11 @@ public class ArtistFragment extends BaseFragment implements ArtistView {
     @Override
     public Context getAppContext() {
         return getActivity().getApplication();
+    }
+
+    private boolean hideSoftKeyboard(EditText editText) {
+        InputMethodManager imm =
+                (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        return imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
     }
 }
