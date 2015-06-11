@@ -1,26 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="@dimen/element_spacing_small">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable name="artist" type="com.addhen.spotify.model.ArtistModel"/>
+    </data>
 
-    <ImageView
-            android:layout_width="@dimen/photo_width"
-            android:layout_height="@dimen/photo_height"
-            android:id="@+id/coverPhoto"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true"
-            android:paddingRight="@dimen/element_spacing_small"
-            android:src="@mipmap/ic_launcher"/>
-    <TextView
+    <RelativeLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            style="@style/TextAppearance.AppCompat.Large"
-            android:layout_marginTop="20dp"
-            android:text="Name"
-            android:ems="10"
-            android:id="@+id/artistName"
-            android:layout_toRightOf="@+id/coverPhoto"/>
-</RelativeLayout>
+            android:layout_height="match_parent"
+            android:padding="@dimen/element_spacing_small">
+
+        <ImageView
+                android:layout_width="@dimen/photo_width"
+                android:layout_height="@dimen/photo_height"
+                android:id="@+id/coverPhoto"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                android:paddingRight="@dimen/element_spacing_small"
+                app:imageUrl="@{artist.coverPhoto}"
+                app:placeholder="@{@drawable/ic_placeholder}"
+                app:error="@{@drawable/ic_placeholder}"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                style="@style/TextAppearance.AppCompat.Large"
+                android:layout_marginTop="20dp"
+                android:ems="10"
+                android:id="@+id/artistName"
+                android:layout_toRightOf="@+id/coverPhoto"
+                android:text="@{artist.name}"/>
+    </RelativeLayout>
+</layout>

@@ -9,6 +9,7 @@ import com.addhen.spotify.view.TrackView;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.UiThread;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -86,57 +87,17 @@ public class TrackFragment extends BaseFragment implements TrackView {
     }
 
     private void setRecyclerView(RecyclerView recyclerView) {
-        mTrackRecyclerViewAdapter = new TrackRecyclerViewAdapter(getActivity().getApplication());
-        mTrackRecyclerViewAdapter.registerAdapterDataObserver(
-                new RecyclerView.AdapterDataObserver() {
-                    @Override
-                    public void onChanged() {
-                        super.onChanged();
-                        setEmptyText();
-                    }
-
-                    @Override
-                    public void onItemRangeChanged(int positionStart, int itemCount) {
-                        super.onItemRangeChanged(positionStart, itemCount);
-                        setEmptyText();
-                    }
-
-                    @Override
-                    public void onItemRangeRemoved(int positionStart, int itemCount) {
-                        super.onItemRangeRemoved(positionStart, itemCount);
-                        setEmptyText();
-                    }
-
-                    @Override
-                    public void onItemRangeInserted(int positionStart, int itemCount) {
-                        super.onItemRangeInserted(positionStart, itemCount);
-                        setEmptyText();
-                    }
-
-                    @Override
-                    public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
-                        super.onItemRangeMoved(fromPosition, toPosition, itemCount);
-                        setEmptyText();
-                    }
-                });
+        mTrackRecyclerViewAdapter = new TrackRecyclerViewAdapter(getActivity().getApplication(),
+                mEmptyView);
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
         recyclerView.setAdapter(mTrackRecyclerViewAdapter);
         if (!Util.isEmpty(mTrackList)) {
             mTrackRecyclerViewAdapter.setAdapterItems(mTrackList);
         }
-        setEmptyText();
-    }
-
-    private void setEmptyText() {
-        if ((mTrackRecyclerViewAdapter == null
-                || mTrackRecyclerViewAdapter.getItemCount() == 0)) {
-            mEmptyView.setVisibility(View.VISIBLE);
-        } else {
-            mEmptyView.setVisibility(View.GONE);
-        }
     }
 
     @Override
+    @UiThread
     public void showTracks(final List<TrackModel> trackList) {
         mTrackList = trackList;
         getActivity().runOnUiThread(new Runnable() {
@@ -168,6 +129,7 @@ public class TrackFragment extends BaseFragment implements TrackView {
     }
 
     @Override
+    @UiThread
     public void hideLoading() {
         getActivity().runOnUiThread(new Runnable() {
             @Override

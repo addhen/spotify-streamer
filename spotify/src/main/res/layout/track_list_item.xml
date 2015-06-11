@@ -1,31 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="@dimen/element_spacing_small">
-
-    <ImageView
-            android:layout_width="@dimen/photo_width"
-            android:layout_height="@dimen/photo_height"
-            android:id="@+id/coverPhoto"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true"
-            android:paddingRight="@dimen/element_spacing_small"/>
-    <TextView
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        >
+    <data>
+        <variable name="track" type="com.addhen.spotify.model.TrackModel"/>
+    </data>
+    <RelativeLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="The scientist"
-            android:id="@+id/trackName"
-            android:layout_alignParentTop="true"
-            android:layout_toEndOf="@+id/coverPhoto"/>
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="A rush of blood to the head"
-            android:id="@+id/albumName"
-            android:layout_below="@+id/trackName"
-            android:layout_toEndOf="@+id/coverPhoto"/>
-</RelativeLayout>
+            android:layout_height="match_parent"
+            android:padding="@dimen/element_spacing_small">
+
+        <ImageView
+                android:layout_width="@dimen/photo_width"
+                android:layout_height="@dimen/photo_height"
+                android:id="@+id/coverPhoto"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                android:paddingRight="@dimen/element_spacing_small"
+                app:imageUrl="@{track.coverPhoto}"
+                app:placeholder="@{@drawable/ic_placeholder}"
+                app:error="@{@drawable/ic_placeholder}"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@{track.name}"
+                android:id="@+id/trackName"
+                android:layout_alignParentTop="true"
+                android:layout_toEndOf="@+id/coverPhoto"/>
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@{track.album}"
+                android:id="@+id/albumName"
+                android:layout_below="@+id/trackName"
+                android:layout_toEndOf="@+id/coverPhoto"/>
+    </RelativeLayout>
+</layout>

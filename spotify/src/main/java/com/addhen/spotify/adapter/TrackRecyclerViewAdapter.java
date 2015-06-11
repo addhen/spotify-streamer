@@ -1,17 +1,21 @@
 package com.addhen.spotify.adapter;
 
 import com.addhen.spotify.R;
+import com.addhen.spotify.databinding.TrackListItemBinding;
 import com.addhen.spotify.model.TrackModel;
 import com.squareup.picasso.Picasso;
 
 import android.content.Context;
+import android.databinding.BindingAdapter;
+import android.databinding.DataBindingUtil;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.UiThread;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,16 +29,26 @@ public class TrackRecyclerViewAdapter
 
     private List<TrackModel> mTrackList;
 
-    public TrackRecyclerViewAdapter(Context context) {
+    private View mEmptyView;
+
+    public TrackRecyclerViewAdapter(final Context context, final View emptyView) {
         context.getTheme().resolveAttribute(R.attr.selectableItemBackground, mTypedValue, true);
         mBackground = mTypedValue.resourceId;
         mTrackList = new ArrayList<>();
+        mEmptyView = emptyView;
+        //Calling this to set the emptyView
+        onDataSetChanged();
+    }
+
+    @BindingAdapter({"bind:imageUrl", "bind:placeholder", "bind:error"})
+    public static void loadImage(ImageView view, String url, Drawable placholder, Drawable error) {
+        Picasso.with(view.getContext()).load(url).placeholder(placholder).error(error).into(view);
     }
 
     public void setAdapterItems(List<TrackModel> trackList) {
         mTrackList.clear();
         mTrackList.addAll(trackList);
-        notifyDataSetChanged();
+        onDataSetChanged();
     }
 
     @Override
@@ -44,46 +58,45 @@ public class TrackRecyclerViewAdapter
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.track_list_item, parent, false);
+        final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        final TrackListItemBinding trackListItemBinding = DataBindingUtil
+                .inflate(inflater, R.layout.track_list_item, parent, false);
+
+        final View view = trackListItemBinding.getRoot();
         view.setBackgroundResource(mBackground);
-        return new ViewHolder(view);
+        return new ViewHolder(view, trackListItemBinding);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.trackId = mTrackList.get(position)._id;
-        holder.mTrackName.setText(mTrackList.get(position).name);
-        holder.mAlbumName.setText(mTrackList.get(position).album);
-        Picasso.with(holder.mCoverPhoto.getContext())
-                .load(mTrackList.get(position).coverPhoto)
-                .placeholder(R.mipmap.ic_launcher)
-                .into(holder.mCoverPhoto);
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
+        TrackModel trackModel = mTrackList.get(position);
+        holder.bindData(trackModel);
+        // TODO: Launch activity for playing music
+    }
+
+    /**
+     * Sets an empty view when the adapter's data item gets to zero
+     */
+    private void onDataSetChanged() {
+        notifyDataSetChanged();
+        mEmptyView.setVisibility(getItemCount() == 0 ? View.VISIBLE : View.GONE);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        public String trackId;
+        private final TrackListItemBinding mTrackListItemBinding;
 
         public final View mView;
 
-        public final ImageView mCoverPhoto;
-
-        public final TextView mTrackName;
-
-        public final TextView mAlbumName;
-
-        public ViewHolder(View view) {
+        public ViewHolder(final View view, final TrackListItemBinding trackListItemBinding) {
             super(view);
             mView = view;
-            mCoverPhoto = (ImageView) view.findViewById(R.id.coverPhoto);
-            mTrackName = (TextView) view.findViewById(R.id.trackName);
-            mAlbumName = (TextView) view.findViewById(R.id.albumName);
+            mTrackListItemBinding = trackListItemBinding;
         }
 
-        @Override
-        public String toString() {
-            return super.toString() + " '" + mTrackName.getText();
+        @UiThread
+        public void bindData(TrackModel trackModel) {
+            mTrackListItemBinding.setTrack(trackModel);
         }
     }
 }

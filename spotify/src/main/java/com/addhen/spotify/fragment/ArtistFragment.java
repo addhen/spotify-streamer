@@ -9,6 +9,7 @@ import com.addhen.spotify.view.ArtistView;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.UiThread;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
@@ -79,45 +80,13 @@ public class ArtistFragment extends BaseFragment implements ArtistView {
     }
 
     private void setRecyclerView(RecyclerView recyclerView) {
-        mArtistRecyclerViewAdapter = new ArtistRecyclerViewAdapter(getActivity().getApplication());
-        mArtistRecyclerViewAdapter.registerAdapterDataObserver(
-                new RecyclerView.AdapterDataObserver() {
-                    @Override
-                    public void onChanged() {
-                        super.onChanged();
-                        setEmptyText();
-                    }
-
-                    @Override
-                    public void onItemRangeChanged(int positionStart, int itemCount) {
-                        super.onItemRangeChanged(positionStart, itemCount);
-                        setEmptyText();
-                    }
-
-                    @Override
-                    public void onItemRangeRemoved(int positionStart, int itemCount) {
-                        super.onItemRangeRemoved(positionStart, itemCount);
-                        setEmptyText();
-                    }
-
-                    @Override
-                    public void onItemRangeInserted(int positionStart, int itemCount) {
-                        super.onItemRangeInserted(positionStart, itemCount);
-                        setEmptyText();
-                    }
-
-                    @Override
-                    public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
-                        super.onItemRangeMoved(fromPosition, toPosition, itemCount);
-                        setEmptyText();
-                    }
-                });
+        mArtistRecyclerViewAdapter = new ArtistRecyclerViewAdapter(getActivity().getApplication(),
+                mEmptyView);
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
         recyclerView.setAdapter(mArtistRecyclerViewAdapter);
         if (!Util.isEmpty(mArtistList)) {
             mArtistRecyclerViewAdapter.setAdapterItems(mArtistList);
         }
-        setEmptyText();
     }
 
     @OnClick(R.id.clearSearchIcon)
@@ -130,16 +99,8 @@ public class ArtistFragment extends BaseFragment implements ArtistView {
         }
     }
 
-    private void setEmptyText() {
-        if ((mArtistRecyclerViewAdapter == null
-                || mArtistRecyclerViewAdapter.getItemCount() == 0)) {
-            mEmptyView.setVisibility(View.VISIBLE);
-        } else {
-            mEmptyView.setVisibility(View.GONE);
-        }
-    }
-
     @Override
+    @UiThread
     public void showArtists(final List<ArtistModel> artistList) {
         mArtistList = artistList;
         getActivity().runOnUiThread(new Runnable() {
@@ -165,6 +126,7 @@ public class ArtistFragment extends BaseFragment implements ArtistView {
     }
 
     @Override
+    @UiThread
     public void loading() {
         mEmptyView.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.VISIBLE);
