@@ -26,7 +26,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
     protected final int mMenu;
 
-    private ActionBar mActionBar;
+    protected ActionBar mActionBar;
 
     public BaseActivity(int layout, int menu) {
         mLayout = layout;

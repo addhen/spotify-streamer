@@ -7,6 +7,9 @@ import com.addhen.spotify.model.TrackModel;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+
+import butterknife.InjectView;
 
 public class PlaybackActivity extends BaseActivity {
 
@@ -22,8 +25,11 @@ public class PlaybackActivity extends BaseActivity {
 
     private PlaybackFragment mPlaybackFragment;
 
+    @InjectView(R.id.toolbar)
+    Toolbar mToolbar;
+
     public PlaybackActivity() {
-        super(R.layout.activity_main, R.menu.menu_main);
+        super(R.layout.activity_playback, R.menu.menu_main);
     }
 
     public static Intent getIntent(final Context context, TrackModel trackModel) {
@@ -35,7 +41,11 @@ public class PlaybackActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setSupportActionBar(mToolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle(null);
+        }
         if (savedInstanceState == null) {
             mTrackModel = getIntent().getParcelableExtra(INTENT_EXTRA_PARAM_TRACK_MODEL);
         } else {

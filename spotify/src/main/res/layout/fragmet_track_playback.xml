@@ -6,7 +6,7 @@
                 android:background="@android:color/black"
                 android:fitsSystemWindows="true">
     <ImageView
-            android:id="@+id/background_image"
+            android:id="@+id/backgroundCoverArt"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
@@ -20,16 +20,19 @@
         <TextView
                 android:id="@+id/playbackAlbumName"
                 style="@style/PlaybackInfo"
+                android:text="Cold Play"
                 android:textColor="@color/grey_light"
                 android:layout_above="@+id/playbackTrackName"/>
         <TextView
                 android:id="@+id/playbackTrackName"
                 style="@style/PlaybackInfo"
+                android:text="Kelly Playing"
                 android:textColor="@color/grey_dark"
                 android:layout_above="@+id/playbackTrackArtistName"/>
         <TextView
                 android:id="@+id/playbackTrackArtistName"
                 style="@style/PlaybackInfo"
+                android:text="Kate Chapman"
                 android:textColor="@color/grey_dark"
                 android:layout_above="@+id/controllers"/>
         <LinearLayout
@@ -38,7 +41,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:visibility="invisible">
+                android:visibility="visible">
             <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="48dp">
@@ -50,6 +53,7 @@
                         android:layout_alignParentStart="true"
                         android:gravity="center_vertical"
                         android:maxLines="1"
+                        android:text="0:00"
                         android:textColor="@android:color/white"/>
                 <SeekBar
                         android:id="@+id/playbackSeekBar"
@@ -59,6 +63,7 @@
                         android:layout_gravity="center"
                         android:layout_marginLeft="5dp"
                         android:layout_marginRight="5dp"
+                        android:text="0:30"
                         android:layout_toStartOf="@+id/playbackEndTime"
                         android:layout_toEndOf="@+id/playbackStartTime"/>
                 <TextView
@@ -76,26 +81,26 @@
                     android:layout_width="match_parent"
                     android:layout_height="48dp">
                 <ImageView
-                        android:id="@+id/previous"
+                        android:id="@+id/playbackPrevious"
                         style="@style/PlaybackControls"
-                        android:src="@drawable/ic_skip_previous_white_48dp"
+                        android:src="@drawable/ic_playback_skip_previous"
                         android:contentDescription="@string/skip_previous"/>
                 <ImageView
-                        android:id="@+id/playPause"
+                        android:id="@+id/playbackPause"
                         style="@style/PlaybackControls"
                         android:layout_weight="2"
-                        android:src="@drawable/ic_play_arrow_white_48dp"
+                        android:src="@drawable/ic_playback_play"
                         android:contentDescription="@string/pause_currently_playing"/>
                 <ImageView
-                        android:id="@+id/next"
+                        android:id="@+id/playbackNext"
                         style="@style/PlaybackControls"
-                        android:src="@drawable/ic_skip_next_white_48dp"
+                        android:src="@drawable/ic_playback_skip_next"
                         android:contentDescription="@string/skip_next"/>
             </LinearLayout>
         </LinearLayout>
     </RelativeLayout>
     <ProgressBar
-            android:id="@+id/playbackProgress"
+            android:id="@+id/playbackTrackLoadingProgress"
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

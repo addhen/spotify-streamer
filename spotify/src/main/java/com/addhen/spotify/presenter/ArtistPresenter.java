@@ -39,6 +39,11 @@ public class ArtistPresenter implements Presenter {
         // Do nothing
     }
 
+    @Override
+    public void destroy() {
+
+    }
+
     public void searchArtist(String name) {
         SpotifyApi api = new SpotifyApi();
         SpotifyService spotify = api.getService();

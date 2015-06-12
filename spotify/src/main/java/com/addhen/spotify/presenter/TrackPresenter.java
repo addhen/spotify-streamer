@@ -41,6 +41,11 @@ public class TrackPresenter implements Presenter {
         // Do nothing
     }
 
+    @Override
+    public void destroy() {
+
+    }
+
     public void setTrack(String artistId) {
         SpotifyApi api = new SpotifyApi();
         SpotifyService spotify = api.getService();

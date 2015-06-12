@@ -1,7 +1,7 @@
 package com.addhen.spotify.model.mapper;
 
 import com.addhen.spotify.model.ArtistModel;
-import com.addhen.spotify.util.Util;
+import com.addhen.spotify.util.Utils;
 
 import android.support.annotation.NonNull;
 
@@ -16,7 +16,7 @@ public class ArtistModelMapper {
         ArtistModel artistModel = new ArtistModel();
         artistModel._id = artist.id;
         artistModel.name = artist.name;
-        if (!Util.isEmpty(artist.images)) {
+        if (!Utils.isEmpty(artist.images)) {
             artistModel.coverPhoto = artist.images.get(0).url;
         }
         return artistModel;

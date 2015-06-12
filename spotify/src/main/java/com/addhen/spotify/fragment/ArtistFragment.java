@@ -4,7 +4,7 @@ import com.addhen.spotify.R;
 import com.addhen.spotify.adapter.ArtistRecyclerViewAdapter;
 import com.addhen.spotify.model.ArtistModel;
 import com.addhen.spotify.presenter.ArtistPresenter;
-import com.addhen.spotify.util.Util;
+import com.addhen.spotify.util.Utils;
 import com.addhen.spotify.view.ArtistView;
 
 import android.content.Context;
@@ -88,7 +88,7 @@ public class ArtistFragment extends BaseFragment implements ArtistView {
                 mEmptyView);
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
         recyclerView.setAdapter(mArtistRecyclerViewAdapter);
-        if (!Util.isEmpty(mArtistList)) {
+        if (!Utils.isEmpty(mArtistList)) {
             mArtistRecyclerViewAdapter.setAdapterItems(mArtistList);
         }
     }
@@ -97,7 +97,7 @@ public class ArtistFragment extends BaseFragment implements ArtistView {
     void clearSearch() {
         mSearchField.setText(null);
         mSearchField.requestFocus();
-        if (!Util.isEmpty(mArtistList)) {
+        if (!Utils.isEmpty(mArtistList)) {
             mArtistList.clear();
             mArtistRecyclerViewAdapter.setAdapterItems(mArtistList);
         }

@@ -4,7 +4,7 @@ import com.addhen.spotify.R;
 import com.addhen.spotify.adapter.TrackRecyclerViewAdapter;
 import com.addhen.spotify.model.TrackModel;
 import com.addhen.spotify.presenter.TrackPresenter;
-import com.addhen.spotify.util.Util;
+import com.addhen.spotify.util.Utils;
 import com.addhen.spotify.view.TrackView;
 
 import android.content.Context;
@@ -62,7 +62,7 @@ public class TrackFragment extends BaseFragment implements TrackView {
         super.onActivityCreated(savedInstanceState);
         mTrackPresenter.setView(this);
         final String artistId = getArguments().getString(ARGUMENT_KEY_ARTIST_ID);
-        if (Util.isEmpty(mTrackList)) {
+        if (Utils.isEmpty(mTrackList)) {
             mTrackPresenter.setTrack(artistId);
         }
     }
@@ -91,7 +91,7 @@ public class TrackFragment extends BaseFragment implements TrackView {
                 mEmptyView);
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
         recyclerView.setAdapter(mTrackRecyclerViewAdapter);
-        if (!Util.isEmpty(mTrackList)) {
+        if (!Utils.isEmpty(mTrackList)) {
             mTrackRecyclerViewAdapter.setAdapterItems(mTrackList);
         }
     }

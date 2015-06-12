@@ -49,4 +49,14 @@ public class TrackModel extends Model implements Parcelable {
             return new TrackModel[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "TrackModel{" +
+                "name='" + name + '\'' +
+                ", album='" + album + '\'' +
+                ", coverPhoto='" + coverPhoto + '\'' +
+                ", previewUrl='" + previewUrl + '\'' +
+                '}';
+    }
 }
