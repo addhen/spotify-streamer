@@ -63,7 +63,6 @@
                         android:layout_gravity="center"
                         android:layout_marginLeft="5dp"
                         android:layout_marginRight="5dp"
-                        android:text="0:30"
                         android:layout_toStartOf="@+id/playbackEndTime"
                         android:layout_toEndOf="@+id/playbackStartTime"/>
                 <TextView
@@ -73,6 +72,7 @@
                         android:layout_marginEnd="@dimen/activity_horizontal_margin"
                         android:layout_alignParentEnd="true"
                         android:gravity="center_vertical"
+                        android:text="0:30"
                         android:layout_alignWithParentIfMissing="true"
                         android:maxLines="1"
                         android:textColor="@android:color/white"/>
@@ -89,7 +89,7 @@
                         android:id="@+id/playbackPause"
                         style="@style/PlaybackControls"
                         android:layout_weight="2"
-                        android:src="@drawable/ic_playback_play"
+                        android:src="@drawable/ic_playback_pause"
                         android:contentDescription="@string/pause_currently_playing"/>
                 <ImageView
                         android:id="@+id/playbackNext"
