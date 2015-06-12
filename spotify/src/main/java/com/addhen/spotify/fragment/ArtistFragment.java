@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.InjectView;
@@ -34,7 +35,7 @@ public class ArtistFragment extends BaseFragment implements ArtistView {
     @InjectView(R.id.empty_list_view)
     TextView mEmptyView;
 
-    private List<ArtistModel> mArtistList;
+    private List<ArtistModel> mArtistList = new ArrayList<>();
 
     @InjectView(R.id.artistRecyclerView)
     RecyclerView mRecyclerView;
@@ -106,13 +107,7 @@ public class ArtistFragment extends BaseFragment implements ArtistView {
     @UiThread
     public void showArtists(final List<ArtistModel> artistList) {
         mArtistList = artistList;
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mArtistRecyclerViewAdapter.setAdapterItems(artistList);
-            }
-        });
-
+        setAdapterItems();
     }
 
     public void setArtistList(final List<ArtistModel> artistList) {
@@ -124,7 +119,10 @@ public class ArtistFragment extends BaseFragment implements ArtistView {
     }
 
     @Override
+    @UiThread
     public void showError(String message) {
+        // Reinitialize items recyclerview
+        setAdapterItems();
         showSnabackar(mRecyclerView, message);
     }
 
@@ -154,5 +152,14 @@ public class ArtistFragment extends BaseFragment implements ArtistView {
         InputMethodManager imm =
                 (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         return imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+    }
+
+    private void setAdapterItems() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mArtistRecyclerViewAdapter.setAdapterItems(mArtistList);
+            }
+        });
     }
 }

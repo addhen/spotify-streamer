@@ -17,6 +17,7 @@ public class TrackModelMapper {
         trackModel._id = track.id;
         trackModel.name = track.name;
         trackModel.album = track.album.name;
+        trackModel.previewUrl = track.preview_url;
         if (!Util.isEmpty(track.album.images)) {
             trackModel.coverPhoto = track.album.images.get(0).url;
         }

@@ -4,7 +4,6 @@ import com.addhen.spotify.R;
 import com.addhen.spotify.fragment.ArtistFragment;
 
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends BaseActivity {
@@ -24,7 +23,7 @@ public class MainActivity extends BaseActivity {
         mArtistFragment = (ArtistFragment) getFragmentManager().findFragmentByTag(FRAG_TAG);
         if (mArtistFragment == null) {
             mArtistFragment = ArtistFragment.newInstance();
-            addFragment(R.id.add_fragment_container, mArtistFragment, FRAG_TAG);
+            replaceFragment(R.id.add_fragment_container, mArtistFragment, FRAG_TAG);
         }
     }
 

@@ -6,4 +6,9 @@
     <string name="empty_list_artist">No artists found.</string>
     <string name="empty_list_track">No tracks found.</string>
     <string name="ab_title_track">Top 10 Tracks</string>
+    <string name="currently_playing">Currently playing track</string>
+    <string name="pause_currently_playing">Pause currently playing</string>
+    <string name="skip_next">Skip next</string>
+    <string name="skip_previous">Skip previous</string>
+    <string name="playback_background">Playback album art</string>
 </resources>

@@ -112,10 +112,10 @@ public abstract class BaseActivity extends AppCompatActivity {
      * @param fragment        The fragment to be added.
      * @param tag             The tag for the fragment
      */
-    protected void addFragment(int containerViewId, Fragment fragment, String tag) {
+    protected void replaceFragment(int containerViewId, Fragment fragment, String tag) {
         android.app.FragmentTransaction fragmentTransaction = this.getFragmentManager()
                 .beginTransaction();
-        fragmentTransaction.add(containerViewId, fragment, tag);
+        fragmentTransaction.replace(containerViewId, fragment, tag);
         fragmentTransaction.commit();
     }
 }

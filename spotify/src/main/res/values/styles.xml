@@ -16,4 +16,23 @@
         <item name="android:layout_gravity">center_horizontal</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
     </style>
+
+    <!-- Playback buttons -->
+    <style name="PlaybackControls">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+    <style name="PlaybackInfo">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:shadowColor">@android:color/black</item>
+        <item name="android:shadowRadius">20</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+    </style>
 </resources>

@@ -30,7 +30,7 @@ public class TrackActivity extends BaseActivity {
         mTrackFragment = (TrackFragment) getFragmentManager().findFragmentByTag(FRAG_TAG);
         if (mTrackFragment == null) {
             mTrackFragment = TrackFragment.newInstance(mArtistId);
-            addFragment(R.id.add_fragment_container, mTrackFragment, FRAG_TAG);
+            replaceFragment(R.id.add_fragment_container, mTrackFragment, FRAG_TAG);
         }
     }
 

@@ -4,6 +4,11 @@
     <dimen name="element_spacing_small">8dp</dimen>
     <dimen name="photo_width">75dp</dimen>
     <dimen name="photo_height">75dp</dimen>
+    <!-- Search -->
     <dimen name="search_icon_width">48dp</dimen>
     <dimen name="search_icon_height">48dp</dimen>
+    <!-- Playback controls -->
+    <dimen name="playback_controls_albumart_size">64dp</dimen>
+    <dimen name="playback_controls_padding">8dp</dimen>
+    <dimen name="playback_controls_albumart_margin">8dp</dimen>
 </resources>
