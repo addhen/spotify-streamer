@@ -18,6 +18,10 @@ public class TrackModelMapper {
         trackModel.name = track.name;
         trackModel.album = track.album.name;
         trackModel.previewUrl = track.preview_url;
+        // Using the first artist name as the artist of the track
+        // The assumption here there will always be at least one
+        // artist associated with a track.
+        trackModel.artistName = track.artists.get(0).name;
         if (!Utils.isEmpty(track.album.images)) {
             trackModel.coverPhoto = track.album.images.get(0).url;
         }

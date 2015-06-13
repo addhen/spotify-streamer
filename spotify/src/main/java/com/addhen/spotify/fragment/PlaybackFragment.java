@@ -291,7 +291,7 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
         if (trackModel == null) {
             return;
         }
-        mPlaybackTrackArtistName.setText(R.string.loading);
+        mPlaybackTrackArtistName.setText(trackModel.artistName);
         mPlaybackAlbumName.setText(trackModel.album);
         mPlaybackTrackName.setText(trackModel.name);
     }

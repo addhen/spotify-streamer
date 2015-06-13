@@ -13,6 +13,8 @@ public class TrackModel extends Model implements Parcelable {
 
     public String previewUrl;
 
+    public String artistName;
+
     public TrackModel() {
 
     }
@@ -22,6 +24,7 @@ public class TrackModel extends Model implements Parcelable {
         album = in.readString();
         coverPhoto = in.readString();
         previewUrl = in.readString();
+        artistName = in.readString();
     }
 
     @Override
@@ -35,6 +38,7 @@ public class TrackModel extends Model implements Parcelable {
         dest.writeString(album);
         dest.writeString(coverPhoto);
         dest.writeString(previewUrl);
+        dest.writeString(artistName);
     }
 
     public static final Parcelable.Creator<TrackModel> CREATOR
