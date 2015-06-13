@@ -9,6 +9,7 @@ import com.squareup.picasso.Picasso;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,8 +31,6 @@ import butterknife.OnClick;
 import static android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class PlaybackFragment extends BaseFragment implements PlaybackView {
-
-    private static final String TAG = PlaybackFragment.class.getSimpleName();
 
     private static final String ARGUMENT_KEY_TRACK_MODEL
             = "com.addhen.spotify.ARGUMENT_TRACK_MODEL";
@@ -82,8 +81,6 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
 
     private Drawable mPlayDrawable;
 
-    private String mCurrentArtUrl;
-
     private final Handler mHandler = new Handler();
 
     private PlaybackPresenter mPlaybackPresenter;
@@ -129,6 +126,7 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
                 .getDrawable(R.drawable.ic_play_circle_outline_white_48dp);
         final TrackModel trackModel = getArguments().getParcelable(ARGUMENT_KEY_TRACK_MODEL);
         mPlaybackPresenter.setTrackModel(trackModel);
+        updateMediaDescription(trackModel);
         mPlaybackSeekbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener()
 
                                                     {
@@ -149,6 +147,8 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
                                                         @Override
                                                         public void onStopTrackingTouch(
                                                                 SeekBar seekBar) {
+                                                            mPlaybackPresenter
+                                                                    .seekTo(seekBar.getProgress());
                                                             updateSeekbar();
                                                         }
                                                     }
@@ -177,6 +177,11 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
     }
 
     @Override
+    public void musicPlayerPrepared() {
+        mControllers.setVisibility(View.VISIBLE);
+    }
+
+    @Override
     public void stopSeekbarUpdate() {
         if (mScheduleFuture != null) {
             mScheduleFuture.cancel(false);
@@ -199,12 +204,14 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
     public void onDestroy() {
         super.onDestroy();
         mPlaybackPresenter.destroy();
+        mExecutorService.shutdown();
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mMediaPlayer = new MediaPlayer();
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mPlaybackPresenter = new PlaybackPresenter(mMediaPlayer);
     }
 
@@ -224,7 +231,7 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
         } else if (id == R.id.playbackNext) {
             mPlaybackPresenter.nextTrack();
         } else if (id == R.id.playbackPause) {
-            mPlaybackPresenter.pauseTrack();
+            mPlaybackPresenter.playTrack();
         }
     }
 
@@ -234,6 +241,7 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
         mPlaybackPause.setVisibility(View.VISIBLE);
         mPlaybackPause.setImageDrawable(mPauseDrawable);
         mControllers.setVisibility(View.VISIBLE);
+        updateDuration();
     }
 
     @Override
@@ -261,7 +269,7 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
 
     @Override
     public void showError(String message) {
-
+        showSnabackar(getView(), message);
     }
 
     @Override
@@ -283,9 +291,9 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
         if (trackModel == null) {
             return;
         }
-        mPlaybackTrackArtistName.setText(trackModel.name);
+        mPlaybackTrackArtistName.setText(R.string.loading);
+        mPlaybackAlbumName.setText(trackModel.album);
         mPlaybackTrackName.setText(trackModel.name);
-        // TODO: fetch background cover art
     }
 
     private void updateDuration() {
@@ -296,7 +304,6 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
 
 
     private void updateProgress() {
-
         mPlaybackSeekbar.setProgress(mMediaPlayer.getCurrentPosition());
     }
 }

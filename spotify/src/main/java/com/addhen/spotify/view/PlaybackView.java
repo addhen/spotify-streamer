@@ -15,4 +15,6 @@ public interface PlaybackView extends UiView {
     void updateSeekbar();
 
     void loadCoverArt(String url);
+
+    void musicPlayerPrepared();
 }
