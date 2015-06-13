@@ -110,14 +110,6 @@ public class PlaybackPresenter implements Presenter {
         }
     }
 
-    public void stopTrack() {
-        if (mMediaPlayer.isPlaying()) {
-            mMediaPlayer.stop();
-            mPlaybackView.stopped();
-            mPlaybackView.stopSeekbarUpdate();
-        }
-    }
-
     public void seekTo(int to) {
         if (mMediaPlayer.isPlaying()) {
             mMediaPlayer.seekTo(to);
@@ -136,7 +128,9 @@ public class PlaybackPresenter implements Presenter {
 
     private void releaseMediaPlayer() {
         if (mMediaPlayer != null) {
-            mMediaPlayer.reset();
+            if (mMediaPlayer.isPlaying()) {
+                mMediaPlayer.stop();
+            }
             mMediaPlayer.release();
             mMediaPlayer = null;
         }

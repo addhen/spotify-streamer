@@ -9,17 +9,28 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.InjectView;
 
 public class PlaybackActivity extends BaseActivity {
 
-    private static final String INTENT_EXTRA_PARAM_TRACK_MODEL
-            = "com.ushahidi.android.INTENT_PARAM_TRACK_MODEL";
+    private static final String INTENT_EXTRA_PARAM_TRACK_MODEL_LIST
+            = "com.ushahidi.android.INTENT_PARAM_TRACK_MODEL_LIST";
 
-    private static final String INTENT_STATE_PARAM_TRACK
-            = "com.ushahidi.android.STATE_PARAM_TRACK_MODEL";
+    private static final String INTENT_STATE_PARAM_TRACK_LIST
+            = "com.ushahidi.android.STATE_PARAM_TRACK_MODEL_LIST";
 
-    private TrackModel mTrackModel;
+    private static final String INTENT_EXTRA_PARAM_TRACK_MODEL_LIST_INDEX
+            = "com.ushahidi.android.INTENT_PARAM_TRACK_MODEL_LIST_INDEX";
+
+    private static final String INTENT_STATE_PARAM_TRACK_MODEL_LIST_INDEX
+            = "com.ushahidi.android.STATE_PARAM_TRACK_MODEL_LIST_INDEX";
+
+    private List<TrackModel> mTrackModelList;
+
+    private int mTrackModelListIndex;
 
     private static final String FRAG_TAG = "track";
 
@@ -32,9 +43,11 @@ public class PlaybackActivity extends BaseActivity {
         super(R.layout.activity_playback, R.menu.menu_main);
     }
 
-    public static Intent getIntent(final Context context, TrackModel trackModel) {
+    public static Intent getIntent(final Context context, ArrayList<TrackModel> trackModelList,
+            int trackListIndex) {
         Intent intent = new Intent(context, PlaybackActivity.class);
-        intent.putExtra(INTENT_EXTRA_PARAM_TRACK_MODEL, trackModel);
+        intent.putParcelableArrayListExtra(INTENT_EXTRA_PARAM_TRACK_MODEL_LIST, trackModelList);
+        intent.putExtra(INTENT_EXTRA_PARAM_TRACK_MODEL_LIST_INDEX, trackListIndex);
         return intent;
     }
 
@@ -47,14 +60,21 @@ public class PlaybackActivity extends BaseActivity {
             getSupportActionBar().setTitle(null);
         }
         if (savedInstanceState == null) {
-            mTrackModel = getIntent().getParcelableExtra(INTENT_EXTRA_PARAM_TRACK_MODEL);
+            mTrackModelList = getIntent().getParcelableArrayListExtra(
+                    INTENT_EXTRA_PARAM_TRACK_MODEL_LIST);
+            mTrackModelListIndex = getIntent().getIntExtra(
+                    INTENT_EXTRA_PARAM_TRACK_MODEL_LIST_INDEX, 0);
         } else {
-            mTrackModel = savedInstanceState.getParcelable(INTENT_STATE_PARAM_TRACK);
+            mTrackModelList = savedInstanceState.getParcelableArrayList(
+                    INTENT_STATE_PARAM_TRACK_LIST);
+            mTrackModelListIndex = savedInstanceState
+                    .getInt(INTENT_STATE_PARAM_TRACK_MODEL_LIST_INDEX, 0);
         }
         mPlaybackFragment = (PlaybackFragment) getFragmentManager()
                 .findFragmentByTag(FRAG_TAG);
         if (mPlaybackFragment == null) {
-            mPlaybackFragment = PlaybackFragment.newInstance(mTrackModel);
+            mPlaybackFragment = PlaybackFragment
+                    .newInstance((ArrayList) mTrackModelList, mTrackModelListIndex);
             replaceFragment(R.id.add_fragment_container, mPlaybackFragment, FRAG_TAG);
         }
     }
@@ -62,6 +82,6 @@ public class PlaybackActivity extends BaseActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mPlaybackFragment.setTrackModel(mTrackModel);
+        mPlaybackFragment.setTrackModel(mTrackModelList, mTrackModelListIndex);
     }
 }

@@ -77,7 +77,8 @@ public class TrackRecyclerViewAdapter
             @Override
             public void onClick(View v) {
                 Context context = v.getContext();
-                Intent intent = PlaybackActivity.getIntent(context, trackModel);
+                Intent intent = PlaybackActivity
+                        .getIntent(context, (ArrayList) mTrackList, position);
                 context.startActivity(intent);
             }
         });

@@ -20,6 +20,8 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -32,14 +34,20 @@ import static android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class PlaybackFragment extends BaseFragment implements PlaybackView {
 
-    private static final String ARGUMENT_KEY_TRACK_MODEL
-            = "com.addhen.spotify.ARGUMENT_TRACK_MODEL";
+    private static final String ARGUMENT_KEY_TRACK_MODEL_LIST
+            = "com.addhen.spotify.ARGUMENT_TRACK_MODEL_LIST";
 
-    private TrackModel mTrackModel;
+    private static final String ARGUMENT_KEY_TRACK_MODEL_LIST_INDEX
+            = "com.addhen.spotify.ARGUMENT_TRACK_MODEL_LIST_INDEX";
 
     private static final long PROGRESS_UPDATE_INTERNAL = 1000;
 
     private static final long PROGRESS_UPDATE_INITIAL_INTERVAL = 100;
+
+    private final Handler mHandler = new Handler();
+
+    private final ScheduledExecutorService mExecutorService =
+            Executors.newSingleThreadScheduledExecutor();
 
     @InjectView(R.id.playbackPause)
     ImageView mPlaybackPause;
@@ -77,11 +85,13 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
     @InjectView(R.id.backgroundCoverArt)
     ImageView mBackgroundImage;
 
+    private List<TrackModel> mTrackModelList;
+
+    private int mTrackModelListIndex;
+
     private Drawable mPauseDrawable;
 
     private Drawable mPlayDrawable;
-
-    private final Handler mHandler = new Handler();
 
     private PlaybackPresenter mPlaybackPresenter;
 
@@ -94,19 +104,18 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
         }
     };
 
-    private final ScheduledExecutorService mExecutorService =
-            Executors.newSingleThreadScheduledExecutor();
-
     private ScheduledFuture<?> mScheduleFuture;
 
     public PlaybackFragment() {
         super(R.layout.fragmet_track_playback, 0);
     }
 
-    public static PlaybackFragment newInstance(@NonNull TrackModel trackModel) {
+    public static PlaybackFragment newInstance(@NonNull ArrayList<TrackModel> trackModelList,
+            int trackModelListIndex) {
         PlaybackFragment fragment = new PlaybackFragment();
         Bundle bundle = new Bundle();
-        bundle.putParcelable(ARGUMENT_KEY_TRACK_MODEL, trackModel);
+        bundle.putParcelableArrayList(ARGUMENT_KEY_TRACK_MODEL_LIST, trackModelList);
+        bundle.putInt(ARGUMENT_KEY_TRACK_MODEL_LIST_INDEX, trackModelListIndex);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -124,9 +133,11 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
                 .getDrawable(R.drawable.ic_pause_circle_outline_white_48dp);
         mPlayDrawable = getActivity().getResources()
                 .getDrawable(R.drawable.ic_play_circle_outline_white_48dp);
-        final TrackModel trackModel = getArguments().getParcelable(ARGUMENT_KEY_TRACK_MODEL);
-        mPlaybackPresenter.setTrackModel(trackModel);
-        updateMediaDescription(trackModel);
+        mTrackModelList = getArguments()
+                .getParcelableArrayList(ARGUMENT_KEY_TRACK_MODEL_LIST);
+        mTrackModelListIndex = getArguments().getInt(ARGUMENT_KEY_TRACK_MODEL_LIST_INDEX,
+                0);
+        playStrong(mTrackModelListIndex);
         mPlaybackSeekbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener()
 
                                                     {
@@ -195,6 +206,12 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        mPlaybackPresenter.pause();
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         mPlaybackPresenter.pause();
@@ -215,12 +232,15 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
         mPlaybackPresenter = new PlaybackPresenter(mMediaPlayer);
     }
 
-    public void setTrackModel(final TrackModel trackModel) {
-        mTrackModel = trackModel;
+    public void setTrackModel(final List<TrackModel> trackModelList, int trackModelListIndex) {
+        mTrackModelList = trackModelList;
+        mTrackModelListIndex = trackModelListIndex;
     }
 
-    public TrackModel getTrackModel() {
-        return mTrackModel;
+    private void playStrong(int trackModelListIndex) {
+        final TrackModel trackModel = mTrackModelList.get(trackModelListIndex);
+        mPlaybackPresenter.setTrackModel(trackModel);
+        updateMediaDescription(trackModel);
     }
 
     @OnClick({R.id.playbackPrevious, R.id.playbackNext, R.id.playbackPause})
@@ -238,9 +258,8 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
     @Override
     public void playing() {
         mPlaybackTrackLoadingProgress.setVisibility(View.INVISIBLE);
-        mPlaybackPause.setVisibility(View.VISIBLE);
         mPlaybackPause.setImageDrawable(mPauseDrawable);
-        mControllers.setVisibility(View.VISIBLE);
+        setViewGone(mControllers, false);
         updateDuration();
     }
 
@@ -248,22 +267,17 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
     public void paused() {
         mControllers.setVisibility(View.VISIBLE);
         mPlaybackTrackLoadingProgress.setVisibility(View.INVISIBLE);
-        mPlaybackPause.setVisibility(View.VISIBLE);
         mPlaybackPause.setImageDrawable(mPlayDrawable);
     }
 
     @Override
     public void stopped() {
         mPlaybackTrackLoadingProgress.setVisibility(View.INVISIBLE);
-        mPlaybackPause.setVisibility(View.VISIBLE);
         mPlaybackPause.setImageDrawable(mPlayDrawable);
     }
 
     @Override
     public void seeked() {
-        mPlaybackPause.setVisibility(View.INVISIBLE);
-        mPlaybackTrackLoadingProgress.setVisibility(View.VISIBLE);
-        mPlaybackTrackName.setText(R.string.loading);
         stopSeekbarUpdate();
     }
 
