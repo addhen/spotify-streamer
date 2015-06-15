@@ -13,7 +13,6 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.widget.Toolbar;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -129,8 +128,6 @@ public class PlaybackActivity extends BaseActivity {
             AudioStreamService.AudioStreamServiceBinder b
                     = (AudioStreamService.AudioStreamServiceBinder) binder;
             mAudioStreamService = b.getAudoStreamService();
-            Toast.makeText(PlaybackActivity.this, "Connected", Toast.LENGTH_SHORT)
-                    .show();
             mPlaybackFragment.setAudioStreamService(mAudioStreamService);
         }
 
