@@ -1,16 +1,18 @@
 package com.addhen.spotify.fragment;
 
+import com.addhen.spotify.BusProvider;
 import com.addhen.spotify.R;
 import com.addhen.spotify.model.TrackModel;
 import com.addhen.spotify.presenter.PlaybackPresenter;
+import com.addhen.spotify.service.AudioStreamService;
+import com.addhen.spotify.state.PlaybackState;
 import com.addhen.spotify.util.Utils;
 import com.addhen.spotify.view.PlaybackView;
+import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -89,13 +91,15 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
 
     private int mTrackModelListIndex;
 
+    private int mCurrentPlayingSong;
+
     private Drawable mPauseDrawable;
 
     private Drawable mPlayDrawable;
 
     private PlaybackPresenter mPlaybackPresenter;
 
-    private MediaPlayer mMediaPlayer;
+    private AudioStreamService mAudioStreamService;
 
     private final Runnable mUpdateProgressTask = new Runnable() {
         @Override
@@ -126,18 +130,19 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
+    public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mPlaybackPresenter.setView(this);
         mPauseDrawable = getActivity().getResources()
                 .getDrawable(R.drawable.ic_pause_circle_outline_white_48dp);
         mPlayDrawable = getActivity().getResources()
                 .getDrawable(R.drawable.ic_play_circle_outline_white_48dp);
+
         mTrackModelList = getArguments()
                 .getParcelableArrayList(ARGUMENT_KEY_TRACK_MODEL_LIST);
         mTrackModelListIndex = getArguments().getInt(ARGUMENT_KEY_TRACK_MODEL_LIST_INDEX,
                 0);
-        playStrong(mTrackModelListIndex);
+        playSong(mTrackModelListIndex);
         mPlaybackSeekbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener()
 
                                                     {
@@ -158,9 +163,9 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
                                                         @Override
                                                         public void onStopTrackingTouch(
                                                                 SeekBar seekBar) {
-                                                            mPlaybackPresenter
+                                                            mAudioStreamService
                                                                     .seekTo(seekBar.getProgress());
-                                                            updateSeekbar();
+                                                            mPlaybackPresenter.seekTo();
                                                         }
                                                     }
 
@@ -202,6 +207,7 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
     @Override
     public void onResume() {
         super.onResume();
+        BusProvider.getInstance().register(this);
         mPlaybackPresenter.resume();
     }
 
@@ -214,6 +220,7 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
     @Override
     public void onPause() {
         super.onPause();
+        BusProvider.getInstance().unregister(this);
         mPlaybackPresenter.pause();
     }
 
@@ -227,9 +234,7 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mMediaPlayer = new MediaPlayer();
-        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        mPlaybackPresenter = new PlaybackPresenter(mMediaPlayer);
+        mPlaybackPresenter = new PlaybackPresenter();
     }
 
     public void setTrackModel(final List<TrackModel> trackModelList, int trackModelListIndex) {
@@ -237,21 +242,19 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
         mTrackModelListIndex = trackModelListIndex;
     }
 
-    private void playStrong(int trackModelListIndex) {
-        final TrackModel trackModel = mTrackModelList.get(trackModelListIndex);
-        mPlaybackPresenter.setTrackModel(trackModel);
-        updateMediaDescription(trackModel);
+    public void setAudioStreamService(AudioStreamService audioStreamService) {
+        mAudioStreamService = audioStreamService;
     }
 
     @OnClick({R.id.playbackPrevious, R.id.playbackNext, R.id.playbackPause})
     public void controlPressed(View view) {
         final int id = view.getId();
         if (id == R.id.playbackPrevious) {
-            mPlaybackPresenter.previousTrack();
+            playPreviousTrack();
         } else if (id == R.id.playbackNext) {
-            mPlaybackPresenter.nextTrack();
+            playNextTrack();
         } else if (id == R.id.playbackPause) {
-            mPlaybackPresenter.playTrack();
+            mAudioStreamService.playTrack();
         }
     }
 
@@ -289,11 +292,13 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
     @Override
     public void loading() {
         mPlaybackTrackLoadingProgress.setVisibility(View.VISIBLE);
+        mControllers.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void hideLoading() {
         mPlaybackTrackLoadingProgress.setVisibility(View.GONE);
+        mControllers.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -311,13 +316,64 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
     }
 
     private void updateDuration() {
-        int duration = mMediaPlayer.getDuration();
+        final int duration = mAudioStreamService.getMediaPlayer().getDuration();
         mPlaybackSeekbar.setMax(duration);
         mPlaybackEndTime.setText(Utils.formatMillis(duration));
     }
 
-
     private void updateProgress() {
-        mPlaybackSeekbar.setProgress(mMediaPlayer.getCurrentPosition());
+        mPlaybackSeekbar.setProgress(mAudioStreamService.getPlayingPosition());
+    }
+
+    private void playSong(int trackModelListIndex) {
+        mCurrentPlayingSong = trackModelListIndex;
+        final TrackModel trackModel = mTrackModelList.get(mCurrentPlayingSong);
+        mPlaybackPresenter.setTrackModel(trackModel.coverPhoto);
+        updateMediaDescription(trackModel);
+    }
+
+    private void playNextTrack() {
+        //setViewGone(mPlaybackNext, false);
+        if (mCurrentPlayingSong < (mTrackModelList.size() - 1)) {
+            playSong(mCurrentPlayingSong + 1);
+            mCurrentPlayingSong = mCurrentPlayingSong + 1;
+        } else {
+            // Play the original strong passed from the intent
+            playSong(mTrackModelListIndex);
+            //setViewGone(mPlaybackNext, true);
+        }
+        mAudioStreamService.playNextTrack();
+    }
+
+    private void playPreviousTrack() {
+        //setViewGone(mPlaybackNext, true);
+        //setViewGone(mPlaybackPrevious, false);
+        if (mCurrentPlayingSong > 0) {
+            playSong(mCurrentPlayingSong - 1);
+            mCurrentPlayingSong = mCurrentPlayingSong - 1;
+        } else {
+            // Play the original index of the strong passed from the intent
+            playSong(mTrackModelListIndex);
+            //setViewGone(mPlaybackPrevious, true);
+        }
+        mAudioStreamService.playPreviousTrack();
+    }
+
+    @Subscribe
+    public void updatePlaybackState(final PlaybackState playbackState) {
+        if (playbackState == null) {
+            return;
+        }
+        if (playbackState.isPlaying()) {
+            mPlaybackPresenter.playTrack();
+        } else if (playbackState.isPaused()) {
+            mPlaybackPresenter.pauseTrack();
+        } else if (playbackState.isStopped()) {
+            stopped();
+        } else if (playbackState.isLoading()) {
+            loading();
+        } else if (playbackState.isError()) {
+            showError(playbackState.getError());
+        }
     }
 }
