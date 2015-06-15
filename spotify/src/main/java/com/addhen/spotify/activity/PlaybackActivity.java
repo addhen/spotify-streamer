@@ -67,7 +67,7 @@ public class PlaybackActivity extends BaseActivity {
         setSupportActionBar(mToolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle(null);
+            getSupportActionBar().setTitle(R.string.now_playing);
         }
         if (savedInstanceState == null) {
             mTrackModelList = getIntent().getParcelableArrayListExtra(
