@@ -1,4 +1,4 @@
-package com.addhen.spotify.common;
+package com.addhen.spotify.listener;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;

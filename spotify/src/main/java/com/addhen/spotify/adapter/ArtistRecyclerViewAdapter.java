@@ -1,13 +1,11 @@
 package com.addhen.spotify.adapter;
 
 import com.addhen.spotify.R;
-import com.addhen.spotify.activity.TrackActivity;
 import com.addhen.spotify.databinding.ArtistListItemBinding;
 import com.addhen.spotify.model.ArtistModel;
 import com.squareup.picasso.Picasso;
 
 import android.content.Context;
-import android.content.Intent;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.Drawable;
@@ -81,18 +79,6 @@ public class ArtistRecyclerViewAdapter
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final ArtistModel artistModel = mArtistList.get(position);
         holder.bindData(artistModel);
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Context context = v.getContext();
-                Intent intent = new Intent(context, TrackActivity.class);
-                intent.putExtra(TrackActivity.INTENT_EXTRA_ARTIST_ID,
-                        mArtistList.get(position)._id);
-                intent.putExtra(TrackActivity.INTENT_EXTRA_ARTIST_NAME,
-                        mArtistList.get(position).name);
-                context.startActivity(intent);
-            }
-        });
     }
 
     /**

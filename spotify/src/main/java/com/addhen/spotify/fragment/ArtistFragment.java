@@ -1,9 +1,13 @@
 package com.addhen.spotify.fragment;
 
+import com.addhen.spotify.BusProvider;
 import com.addhen.spotify.R;
 import com.addhen.spotify.adapter.ArtistRecyclerViewAdapter;
+import com.addhen.spotify.listener.RecyclerItemClickListener;
 import com.addhen.spotify.model.ArtistModel;
 import com.addhen.spotify.presenter.ArtistPresenter;
+import com.addhen.spotify.state.ArtistEvent;
+import com.addhen.spotify.state.SearchClearedEvent;
 import com.addhen.spotify.util.Utils;
 import com.addhen.spotify.view.ArtistView;
 
@@ -62,6 +66,18 @@ public class ArtistFragment extends BaseFragment implements ArtistView {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        BusProvider.getInstance().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        BusProvider.getInstance().unregister(this);
+    }
+
+    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mArtistPresenter = new ArtistPresenter();
@@ -91,6 +107,15 @@ public class ArtistFragment extends BaseFragment implements ArtistView {
         if (!Utils.isEmpty(mArtistList)) {
             mArtistRecyclerViewAdapter.setAdapterItems(mArtistList);
         }
+        recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getAppContext(),
+                new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        BusProvider.getInstance()
+                                .post(new ArtistEvent(mArtistList.get(position)._id,
+                                        mArtistList.get(position).name));
+                    }
+                }));
     }
 
     @OnClick(R.id.clearSearchIcon)
@@ -100,6 +125,7 @@ public class ArtistFragment extends BaseFragment implements ArtistView {
         if (!Utils.isEmpty(mArtistList)) {
             mArtistList.clear();
             mArtistRecyclerViewAdapter.setAdapterItems(mArtistList);
+            BusProvider.getInstance().post(new SearchClearedEvent());
         }
     }
 

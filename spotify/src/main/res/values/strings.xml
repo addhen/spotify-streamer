@@ -14,4 +14,6 @@
     <string name="loading">Loading...</string>
     <string name="playback_error">Error occured during playback</string>
     <string name="now_playing">Now playing</string>
+    <string name="title_item_list">Items</string>
+    <string name="title_item_detail">Item Detail</string>
 </resources>

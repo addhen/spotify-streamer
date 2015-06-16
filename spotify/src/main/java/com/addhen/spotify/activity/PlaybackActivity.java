@@ -84,7 +84,7 @@ public class PlaybackActivity extends BaseActivity {
         if (mPlaybackFragment == null) {
             mPlaybackFragment = PlaybackFragment
                     .newInstance((ArrayList) mTrackModelList, mTrackModelListIndex);
-            replaceFragment(R.id.add_fragment_container, mPlaybackFragment, FRAG_TAG);
+            replaceFragment(R.id.add_playback_fragment_container, mPlaybackFragment, FRAG_TAG);
         }
     }
 
