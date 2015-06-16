@@ -88,6 +88,13 @@ public class PlaybackActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState
+                .putParcelableArrayList(INTENT_STATE_PARAM_TRACK_LIST, (ArrayList) mTrackModelList);
+        savedInstanceState.putInt(INTENT_STATE_PARAM_TRACK_MODEL_LIST_INDEX, mTrackModelListIndex);
+        super.onSaveInstanceState(savedInstanceState);
+    }
 
     @Override
     protected void onResume() {
@@ -122,7 +129,6 @@ public class PlaybackActivity extends BaseActivity {
     }
 
     private ServiceConnection mConnection = new ServiceConnection() {
-
         public void onServiceConnected(ComponentName className,
                 IBinder binder) {
             AudioStreamService.AudioStreamServiceBinder b

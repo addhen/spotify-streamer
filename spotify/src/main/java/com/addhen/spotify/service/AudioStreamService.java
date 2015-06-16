@@ -67,7 +67,6 @@ public class AudioStreamService extends Service
     synchronized private static WifiManager.WifiLock getPhoneWifiLock(
             Context context) {
         if (wifilock == null) {
-
             WifiManager manager = (WifiManager) context
                     .getSystemService(Context.WIFI_SERVICE);
             wifilock = manager.createWifiLock(WifiManager.WIFI_MODE_FULL,
@@ -81,11 +80,9 @@ public class AudioStreamService extends Service
         if (!getPhoneWakeLock(context.getApplicationContext()).isHeld()) {
             getPhoneWakeLock(context.getApplicationContext()).acquire();
         }
-
         if (!getPhoneWifiLock(context.getApplicationContext()).isHeld()) {
             getPhoneWifiLock(context.getApplicationContext()).acquire();
         }
-
         context.startService(intent);
     }
 
@@ -97,11 +94,8 @@ public class AudioStreamService extends Service
         if (intent != null) {
             mTrackModelList = intent
                     .getParcelableArrayListExtra(INTENT_EXTRA_PARAM_TRACK_MODEL_LIST);
-            mTrackModelListIndex = intent.getIntExtra(INTENT_EXTRA_PARAM_TRACK_MODEL_LIST_INDEX,
-                    0);
-            final TrackModel trackModel = mTrackModelList.get(
-                    mCurrentPlayingSong);
-
+            mTrackModelListIndex = intent.getIntExtra(INTENT_EXTRA_PARAM_TRACK_MODEL_LIST_INDEX, 0);
+            final TrackModel trackModel = mTrackModelList.get(mCurrentPlayingSong);
             mPlaybackState = new PlaybackState();
             setTrack(trackModel);
         }
@@ -142,12 +136,10 @@ public class AudioStreamService extends Service
         try {
             executeTask(intent);
         } finally {
-
             if (getPhoneWakeLock(this.getApplicationContext()).isHeld()
                     && getPhoneWakeLock(this.getApplicationContext()) != null) {
                 getPhoneWakeLock(this.getApplicationContext()).release();
             }
-
             if (getPhoneWifiLock(this.getApplicationContext()).isHeld()
                     && getPhoneWifiLock(this.getApplicationContext()) != null) {
                 getPhoneWifiLock(this.getApplicationContext()).release();
@@ -162,7 +154,6 @@ public class AudioStreamService extends Service
                 && getPhoneWifiLock(this.getApplicationContext()) != null) {
             getPhoneWifiLock(this.getApplicationContext()).release();
         }
-
         if (getPhoneWakeLock(this.getApplicationContext()).isHeld()
                 && getPhoneWakeLock(this.getApplicationContext()) != null) {
             getPhoneWakeLock(this.getApplicationContext()).release();

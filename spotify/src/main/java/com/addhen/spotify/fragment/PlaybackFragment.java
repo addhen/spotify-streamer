@@ -163,8 +163,11 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
                                                         @Override
                                                         public void onStopTrackingTouch(
                                                                 SeekBar seekBar) {
-                                                            mAudioStreamService
-                                                                    .seekTo(seekBar.getProgress());
+                                                            if (mAudioStreamService != null) {
+                                                                mAudioStreamService
+                                                                        .seekTo(seekBar
+                                                                                .getProgress());
+                                                            }
                                                             mPlaybackPresenter.seekTo();
                                                         }
                                                     }
@@ -254,7 +257,9 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
         } else if (id == R.id.playbackNext) {
             playNextTrack();
         } else if (id == R.id.playbackPause) {
-            mAudioStreamService.playTrack();
+            if (mAudioStreamService != null) {
+                mAudioStreamService.playTrack();
+            }
         }
     }
 
@@ -316,13 +321,17 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
     }
 
     private void updateDuration() {
-        final int duration = mAudioStreamService.getMediaPlayer().getDuration();
-        mPlaybackSeekbar.setMax(duration);
-        mPlaybackEndTime.setText(Utils.formatMillis(duration));
+        if (mAudioStreamService != null) {
+            final int duration = mAudioStreamService.getMediaPlayer().getDuration();
+            mPlaybackSeekbar.setMax(duration);
+            mPlaybackEndTime.setText(Utils.formatMillis(duration));
+        }
     }
 
     private void updateProgress() {
-        mPlaybackSeekbar.setProgress(mAudioStreamService.getPlayingPosition());
+        if (mAudioStreamService != null) {
+            mPlaybackSeekbar.setProgress(mAudioStreamService.getPlayingPosition());
+        }
     }
 
     private void playSong(int trackModelListIndex) {
@@ -342,7 +351,9 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
             playSong(mTrackModelListIndex);
             //setViewGone(mPlaybackNext, true);
         }
-        mAudioStreamService.playNextTrack();
+        if (mAudioStreamService != null) {
+            mAudioStreamService.playNextTrack();
+        }
     }
 
     private void playPreviousTrack() {
@@ -356,7 +367,9 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
             playSong(mTrackModelListIndex);
             //setViewGone(mPlaybackPrevious, true);
         }
-        mAudioStreamService.playPreviousTrack();
+        if (mAudioStreamService != null) {
+            mAudioStreamService.playPreviousTrack();
+        }
     }
 
     @Subscribe
