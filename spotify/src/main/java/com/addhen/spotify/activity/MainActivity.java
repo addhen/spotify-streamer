@@ -45,10 +45,14 @@ public class MainActivity extends BaseActivity {
         BusProvider.getInstance().register(this);
     }
 
+    public void onPause() {
+        super.onPause();
+        BusProvider.getInstance().unregister(this);
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
-        BusProvider.getInstance().unregister(this);
         mArtistFragment.setArtistList(mArtistFragment.getArtistList());
     }
 
@@ -85,6 +89,8 @@ public class MainActivity extends BaseActivity {
     @Subscribe
     public void searchCleared(SearchClearedEvent event) {
         if (isTwoPane()) {
+            // TODO: Refresh the list instead of making a new request to spotify api when
+            // an artist is empty
             replaceTrackFrag("");
         }
     }

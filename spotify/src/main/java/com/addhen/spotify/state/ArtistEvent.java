@@ -10,8 +10,4 @@ public class ArtistEvent {
         this.artistId = artistId;
         this.artistName = artistName;
     }
-
-    public static class SearchClearedEvent {
-
-    }
 }

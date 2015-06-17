@@ -54,12 +54,6 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
     @InjectView(R.id.playbackPause)
     ImageView mPlaybackPause;
 
-    @InjectView(R.id.playbackNext)
-    ImageView mPlaybackNext;
-
-    @InjectView(R.id.playbackPrevious)
-    ImageView mPlaybackPrevious;
-
     @InjectView(R.id.playbackStartTime)
     TextView mPlaybackStartTime;
 
@@ -267,7 +261,7 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
     public void playing() {
         mPlaybackTrackLoadingProgress.setVisibility(View.INVISIBLE);
         mPlaybackPause.setImageDrawable(mPauseDrawable);
-        setViewGone(mControllers, false);
+        mControllers.setVisibility(View.VISIBLE);
         updateDuration();
     }
 
@@ -357,15 +351,12 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
     }
 
     private void playPreviousTrack() {
-        //setViewGone(mPlaybackNext, true);
-        //setViewGone(mPlaybackPrevious, false);
         if (mCurrentPlayingSong > 0) {
             playSong(mCurrentPlayingSong - 1);
             mCurrentPlayingSong = mCurrentPlayingSong - 1;
         } else {
-            // Play the original index of the strong passed from the intent
+            // Play the original index of the song passed from the intent.
             playSong(mTrackModelListIndex);
-            //setViewGone(mPlaybackPrevious, true);
         }
         if (mAudioStreamService != null) {
             mAudioStreamService.playPreviousTrack();

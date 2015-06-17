@@ -11,7 +11,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
 
 import butterknife.ButterKnife;
 
@@ -105,59 +104,5 @@ public abstract class BaseFragment extends Fragment {
      */
     protected void showSnabackar(View view, @StringRes int resId) {
         showSnabackar(view, getString(resId));
-    }
-
-    /**
-     * Fades in a view.
-     *
-     * @param view The view to be faded in
-     */
-    protected android.view.View fadeIn(final android.view.View view) {
-        if (view != null) {
-            view.startAnimation(AnimationUtils.loadAnimation(getActivity(),
-                    android.R.anim.fade_in));
-        }
-        return view;
-    }
-
-    /**
-     * Fades out a view
-     *
-     * @param view The view to be faded out
-     */
-    protected android.view.View fadeOut(final android.view.View view) {
-        if (view != null) {
-            view.startAnimation(AnimationUtils.loadAnimation(getActivity(),
-                    android.R.anim.fade_out));
-        }
-        return view;
-    }
-
-    /**
-     * Animates the visibility of a view
-     *
-     * @param view The view to change its visibility
-     * @param gone Specifiy whether it should be gone or visible
-     * @param <V>  The view to change its visibility
-     */
-    protected <V extends android.view.View> V setViewGone(final V view, final boolean gone) {
-        if (view != null) {
-            if (gone) {
-                if (View.GONE != view.getVisibility()) {
-
-                    fadeOut(view);
-
-                    view.setVisibility(View.GONE);
-                }
-            } else {
-                if (View.VISIBLE != view.getVisibility()) {
-                    view.setVisibility(View.VISIBLE);
-
-                    fadeIn(view);
-
-                }
-            }
-        }
-        return view;
     }
 }

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.InjectView;
+import butterknife.Optional;
 
 public class PlaybackActivity extends BaseActivity {
 
@@ -45,6 +46,7 @@ public class PlaybackActivity extends BaseActivity {
 
     private AudioStreamService mAudioStreamService;
 
+    @Optional
     @InjectView(R.id.toolbar)
     Toolbar mToolbar;
 
@@ -63,10 +65,13 @@ public class PlaybackActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setSupportActionBar(mToolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle(R.string.now_playing);
+        boolean isTwoPane = getResources().getBoolean(R.bool.large_layout);
+        if (isTwoPane) {
+            setSupportActionBar(mToolbar);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setTitle(R.string.now_playing);
+            }
         }
         if (savedInstanceState == null) {
             mTrackModelList = getIntent().getParcelableArrayListExtra(

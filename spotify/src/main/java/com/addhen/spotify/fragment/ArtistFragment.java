@@ -68,13 +68,11 @@ public class ArtistFragment extends BaseFragment implements ArtistView {
     @Override
     public void onResume() {
         super.onResume();
-        BusProvider.getInstance().register(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        BusProvider.getInstance().unregister(this);
     }
 
     @Override
@@ -125,7 +123,10 @@ public class ArtistFragment extends BaseFragment implements ArtistView {
         if (!Utils.isEmpty(mArtistList)) {
             mArtistList.clear();
             mArtistRecyclerViewAdapter.setAdapterItems(mArtistList);
-            BusProvider.getInstance().post(new SearchClearedEvent());
+            boolean isTwoPane = getResources().getBoolean(R.bool.large_layout);
+            if (isTwoPane) {
+                BusProvider.getInstance().post(new SearchClearedEvent());
+            }
         }
     }
 
