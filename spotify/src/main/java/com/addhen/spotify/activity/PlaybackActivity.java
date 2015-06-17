@@ -12,7 +12,11 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import java.util.ArrayList;
@@ -47,12 +51,15 @@ public class PlaybackActivity extends BaseActivity {
 
     private AudioStreamService mAudioStreamService;
 
+    private ShareActionProvider mShareActionProvider;
+
+
     @Optional
     @InjectView(R.id.toolbar)
     Toolbar mToolbar;
 
     public PlaybackActivity() {
-        super(R.layout.activity_playback, 0);
+        super(R.layout.activity_playback, R.menu.menu_playback);
     }
 
     public static Intent getIntent(final Context context, ArrayList<TrackModel> trackModelList,
@@ -165,7 +172,30 @@ public class PlaybackActivity extends BaseActivity {
         if (id == android.R.id.home) {
             finish();
             return true;
+        } else if (id == R.id.menu_playback_share) {
+            final TrackModel trackModel = mPlaybackFragment.getCurrentlyPlayingSong();
+            setShareIntent(trackModel);
+            return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_playback, menu);
+        MenuItem item = menu.findItem(R.id.menu_playback_share);
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+        final TrackModel trackModel = mPlaybackFragment.getCurrentlyPlayingSong();
+        setShareIntent(trackModel);
+        return true;
+    }
+
+    private void setShareIntent(@NonNull TrackModel trackModel) {
+        Intent share = new Intent(android.content.Intent.ACTION_SEND);
+        share.setType("text/plain");
+        share.putExtra(Intent.EXTRA_TEXT, trackModel.externalUrl);
+        if (mShareActionProvider != null) {
+            mShareActionProvider.setShareIntent(share);
+        }
     }
 }

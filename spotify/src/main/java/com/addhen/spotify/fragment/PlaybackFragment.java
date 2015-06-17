@@ -363,6 +363,10 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
         }
     }
 
+    public TrackModel getCurrentlyPlayingSong() {
+        return mTrackModelList.get(mCurrentPlayingSong);
+    }
+
     @Subscribe
     public void updatePlaybackState(final PlaybackState playbackState) {
         if (playbackState == null) {

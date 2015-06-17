@@ -28,4 +28,5 @@
     <string name="preferences_general_settings_supported_countries_hint">By default USA is supported
     </string>
     <string name="settings">Settings</string>
+    <string name="share">Share</string>
 </resources>
