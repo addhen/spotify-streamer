@@ -13,6 +13,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,11 +29,11 @@ public class PlaybackActivity extends BaseActivity {
     private static final String INTENT_EXTRA_PARAM_TRACK_MODEL_LIST_INDEX
             = "com.addhen.spotify.activity.INTENT_PARAM_TRACK_MODEL_LIST_INDEX";
 
-    private static final String INTENT_STATE_PARAM_TRACK_LIST
+    private static final String BUNDLE_STATE_PARAM_TRACK_LIST
             = "com.addhen.spotify.activity.STATE_PARAM_TRACK_MODEL_LIST";
 
-    private static final String INTENT_STATE_PARAM_TRACK_MODEL_LIST_INDEX
-            = "com.addhen.spotify.activity.STATE_PARAM_TRACK_MODEL_LIST_INDEX";
+    private static final String BUNDLE_STATE_PARAM_TRACK_MODEL_LIST_INDEX
+            = "com.addhen.spotify.activity.BUNDLE_STATE_PARAM_TRACK_MODEL_LIST_INDEX";
 
     private List<TrackModel> mTrackModelList;
 
@@ -51,7 +52,7 @@ public class PlaybackActivity extends BaseActivity {
     Toolbar mToolbar;
 
     public PlaybackActivity() {
-        super(R.layout.activity_playback, R.menu.menu_main);
+        super(R.layout.activity_playback, 0);
     }
 
     public static Intent getIntent(final Context context, ArrayList<TrackModel> trackModelList,
@@ -73,6 +74,17 @@ public class PlaybackActivity extends BaseActivity {
                 getSupportActionBar().setTitle(R.string.now_playing);
             }
         }
+        setupIntent(savedInstanceState);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        setupIntent(null);
+    }
+
+    private void setupIntent(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             mTrackModelList = getIntent().getParcelableArrayListExtra(
                     INTENT_EXTRA_PARAM_TRACK_MODEL_LIST);
@@ -80,9 +92,9 @@ public class PlaybackActivity extends BaseActivity {
                     INTENT_EXTRA_PARAM_TRACK_MODEL_LIST_INDEX, 0);
         } else {
             mTrackModelList = savedInstanceState.getParcelableArrayList(
-                    INTENT_STATE_PARAM_TRACK_LIST);
+                    BUNDLE_STATE_PARAM_TRACK_LIST);
             mTrackModelListIndex = savedInstanceState
-                    .getInt(INTENT_STATE_PARAM_TRACK_MODEL_LIST_INDEX, 0);
+                    .getInt(BUNDLE_STATE_PARAM_TRACK_MODEL_LIST_INDEX, 0);
         }
         mPlaybackFragment = (PlaybackFragment) getFragmentManager()
                 .findFragmentByTag(FRAG_TAG);
@@ -96,8 +108,8 @@ public class PlaybackActivity extends BaseActivity {
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState
-                .putParcelableArrayList(INTENT_STATE_PARAM_TRACK_LIST, (ArrayList) mTrackModelList);
-        savedInstanceState.putInt(INTENT_STATE_PARAM_TRACK_MODEL_LIST_INDEX, mTrackModelListIndex);
+                .putParcelableArrayList(BUNDLE_STATE_PARAM_TRACK_LIST, (ArrayList) mTrackModelList);
+        savedInstanceState.putInt(BUNDLE_STATE_PARAM_TRACK_MODEL_LIST_INDEX, mTrackModelListIndex);
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -146,4 +158,14 @@ public class PlaybackActivity extends BaseActivity {
             mAudioStreamService = null;
         }
     };
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        final int id = item.getItemId();
+        if (id == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

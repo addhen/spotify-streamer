@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/preferences_general_settings">
+        <ListPreference android:title="@string/preferences_general_settings_supported_countries"
+                        android:summary="@string/preferences_general_settings_supported_countries_hint"
+                        android:key="playback_country_code_preference"
+                        android:defaultValue="US"
+                        android:entries="@array/countryNames"
+                        android:entryValues="@array/countryCodes"/>
+        <CheckBoxPreference
+                android:key="enable_playback_notification_preference"
+                android:summary="@string/preferences_general_settings_playback_notification_hint"
+                android:title="@string/preferences_general_settings_playback_notification"/>
+    </PreferenceCategory>
+</PreferenceScreen>

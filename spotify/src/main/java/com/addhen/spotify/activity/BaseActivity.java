@@ -1,10 +1,12 @@
 package com.addhen.spotify.activity;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -100,7 +102,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                finish();
+                navigateUp();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -170,5 +172,24 @@ public abstract class BaseActivity extends AppCompatActivity {
             }
         }
         return view;
+    }
+
+    protected boolean navigateUp() {
+        final Intent intent = getParentIntent();
+        if (intent != null) {
+            NavUtils.navigateUpTo(this, intent);
+            return true;
+        }
+        return false;
+    }
+
+    protected Intent getParentIntent() {
+        return NavUtils.getParentActivityIntent(this);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        getIntent();
     }
 }

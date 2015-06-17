@@ -46,11 +46,11 @@ public class TrackPresenter implements Presenter {
 
     }
 
-    public void setTrack(String artistId) {
+    public void setTrack(String artistId, String countryCode) {
         SpotifyApi api = new SpotifyApi();
         SpotifyService spotify = api.getService();
         Map<String, Object> options = new HashMap<>();
-        options.put("country", "US");
+        options.put("country", countryCode);
         mTrackView.loading();
         spotify.getArtistTopTrack(artistId, options, new Callback<Tracks>() {
             @Override

@@ -8,7 +8,9 @@ import com.addhen.spotify.util.Utils;
 import com.addhen.spotify.view.TrackView;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.UiThread;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -63,7 +65,9 @@ public class TrackFragment extends BaseFragment implements TrackView {
         mTrackPresenter.setView(this);
         final String artistId = getArguments().getString(ARGUMENT_KEY_ARTIST_ID);
         if (Utils.isEmpty(mTrackList)) {
-            mTrackPresenter.setTrack(artistId);
+            final String countryCode = getSharedPreferences()
+                    .getString(SettingsFragment.PLAYBACK_COUNTRY_CODES, "US");
+            mTrackPresenter.setTrack(artistId, countryCode);
         }
     }
 
@@ -142,5 +146,10 @@ public class TrackFragment extends BaseFragment implements TrackView {
     @Override
     public Context getAppContext() {
         return getActivity().getApplication();
+    }
+
+
+    private SharedPreferences getSharedPreferences() {
+        return PreferenceManager.getDefaultSharedPreferences(getAppContext());
     }
 }

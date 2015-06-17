@@ -4,20 +4,29 @@ import com.addhen.spotify.BusProvider;
 import com.addhen.spotify.R;
 import com.addhen.spotify.fragment.ArtistFragment;
 import com.addhen.spotify.fragment.TrackFragment;
+import com.addhen.spotify.model.ArtistModel;
 import com.addhen.spotify.state.ArtistEvent;
 import com.addhen.spotify.state.SearchClearedEvent;
+import com.addhen.spotify.util.Utils;
 import com.squareup.otto.Subscribe;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends BaseActivity {
+
+    private static final String INTENT_PARAM_ARTIST_MODEL_LIST
+            = "com.addhen.spotify.activity.INTENT_PARAM_ARTIST_MODEL_LIST";
 
     private ArtistFragment mArtistFragment;
 
     private static final String FRAG_TAG = "artist";
 
+    private List<ArtistModel> mArtistModelList;
 
     public MainActivity() {
         super(R.layout.activity_main, R.menu.menu_main);
@@ -37,12 +46,35 @@ public class MainActivity extends BaseActivity {
                 replaceFragment(R.id.add_artist_fragment_container, mArtistFragment, FRAG_TAG);
             }
         }
+        if (savedInstanceState != null) {
+            mArtistModelList = savedInstanceState
+                    .getParcelableArrayList(INTENT_PARAM_ARTIST_MODEL_LIST);
+        } else {
+            mArtistModelList = mArtistFragment.getArtistList();
+        }
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putParcelableArrayList(INTENT_PARAM_ARTIST_MODEL_LIST,
+                (ArrayList) mArtistFragment.getArtistList());
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         BusProvider.getInstance().register(this);
+        if (!Utils.isEmpty(mArtistModelList)) {
+            mArtistFragment.showArtists(mArtistModelList);
+        }
     }
 
     public void onPause() {
@@ -53,13 +85,17 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mArtistFragment.setArtistList(mArtistFragment.getArtistList());
+        mArtistFragment.setArtistList(mArtistModelList);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         final int id = item.getItemId();
         if (id == R.id.action_settings) {
+            startActivity(SettingsActivity.getIntent(getApplicationContext()));
+            return true;
+        } else if (id == android.R.id.home) {
+            finish();
             return true;
         }
         return super.onOptionsItemSelected(item);

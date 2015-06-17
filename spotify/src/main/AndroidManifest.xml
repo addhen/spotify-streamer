@@ -14,21 +14,24 @@
             android:theme="@style/AppTheme">
         <activity
                 android:name=".activity.MainActivity"
-                android:label="@string/app_name">
+                android:label="@string/app_name"
+                android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
                 android:name=".activity.TrackActivity"
-                android:label="@string/ab_title_track">
+                android:label="@string/ab_title_track"
+                android:parentActivityName=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
-
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".activity.MainActivity"/>
         </activity>
         <activity
                 android:name=".activity.PlaybackActivity"
@@ -36,11 +39,18 @@
                 android:theme="@style/AppTheme.PopupActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
-
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-
+        <activity
+                android:name=".activity.SettingsActivity"
+                android:label="@string/settings"
+                android:exported="false"
+                android:launchMode="singleTask"
+                android:parentActivityName=".activity.MainActivity"/>
+        <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.MainActivity"/>
         <service android:name=".service.AudioStreamService"/>
     </application>
 

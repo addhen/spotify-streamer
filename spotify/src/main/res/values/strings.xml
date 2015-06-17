@@ -16,4 +16,16 @@
     <string name="now_playing">Now playing</string>
     <string name="title_item_list">Items</string>
     <string name="title_item_detail">Item Detail</string>
+    <string name="preferences_general_settings">General Settings</string>
+    <string name="preferences_general_settings_playback_notification">Enable playback notification
+    </string>
+    <string name="preferences_general_settings_playback_notification_hint">Enabling this will allow
+        playback to show notifications in the Android app lock screen.
+    </string>
+    <string name="preferences_general_settings_supported_countries">Select a country spotify is
+        supported in.
+    </string>
+    <string name="preferences_general_settings_supported_countries_hint">By default USA is supported
+    </string>
+    <string name="settings">Settings</string>
 </resources>

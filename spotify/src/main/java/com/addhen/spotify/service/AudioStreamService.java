@@ -254,15 +254,11 @@ public class AudioStreamService extends Service
     }
 
     public void playPreviousTrack() {
-        //setViewGone(mPlaybackNext, true);
-        //setViewGone(mPlaybackPrevious, false);
         if (mCurrentPlayingSong > 0) {
             playSong(mCurrentPlayingSong - 1);
             mCurrentPlayingSong = mCurrentPlayingSong - 1;
         } else {
-            // Play the original index of the strong passed from the intent
             playSong(mTrackModelListIndex);
-            //setViewGone(mPlaybackPrevious, true);
         }
     }
 
