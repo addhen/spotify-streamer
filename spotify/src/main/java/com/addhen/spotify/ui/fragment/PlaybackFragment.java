@@ -346,14 +346,11 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
     }
 
     private void playNextTrack() {
-        //setViewGone(mPlaybackNext, false);
         if (mCurrentPlayingSong < (mTrackModelList.size() - 1)) {
             playSong(mCurrentPlayingSong + 1);
             mCurrentPlayingSong = mCurrentPlayingSong + 1;
         } else {
-            // Play the original strong passed from the intent
             playSong(mTrackModelListIndex);
-            //setViewGone(mPlaybackNext, true);
         }
         if (mAudioStreamService != null) {
             mAudioStreamService.playNextTrack();

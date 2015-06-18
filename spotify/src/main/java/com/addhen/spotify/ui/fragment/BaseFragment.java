@@ -3,7 +3,6 @@ package com.addhen.spotify.ui.fragment;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -93,15 +92,5 @@ public abstract class BaseFragment extends Fragment {
      */
     protected void showSnabackar(View view, String message) {
         Snackbar.make(view, message, Snackbar.LENGTH_LONG).show();
-    }
-
-    /**
-     * Shows a simple {@link Snackbar}
-     *
-     * @param view  The view to anchor the Snackbar to
-     * @param resId The message to be showed
-     */
-    protected void showSnabackar(View view, @StringRes int resId) {
-        showSnabackar(view, getString(resId));
     }
 }
