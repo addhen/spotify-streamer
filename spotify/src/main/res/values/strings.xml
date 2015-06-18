@@ -31,4 +31,6 @@
     </string>
     <string name="settings">Settings</string>
     <string name="share">Share</string>
+    <string name="pause">Pause</string>
+    <string name="play">Play</string>
 </resources>

@@ -6,9 +6,12 @@ import com.addhen.spotify.R;
 import com.addhen.spotify.model.TrackModel;
 import com.addhen.spotify.state.PlaybackState;
 import com.addhen.spotify.state.State;
+import com.addhen.spotify.ui.notification.PlaybackNotificationManager;
 import com.squareup.otto.Produce;
 
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -18,6 +21,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
+import android.support.v4.media.session.MediaSessionCompat;
 
 import java.io.IOException;
 import java.util.List;
@@ -44,11 +48,18 @@ public class AudioStreamService extends Service
 
     private final IBinder mAudioStreamBinder = new AudioStreamServiceBinder();
 
-    private int mCurrentPlayingSong;
+    private int mCurrentPlayingTrack;
 
     private List<TrackModel> mTrackModelList;
 
     private int mTrackModelListIndex;
+
+    public static final String ACTION_MEDIA_BUTTONS
+            = "com.addhen.spotify.servcie.ACTION_MEDIA_BUTTONS";
+
+    private MediaSessionCompat mSession;
+
+    private PlaybackNotificationManager mPlaybackNotificationManager;
 
     synchronized private static PowerManager.WakeLock getPhoneWakeLock(
             Context context) {
@@ -92,7 +103,7 @@ public class AudioStreamService extends Service
             mTrackModelList = intent
                     .getParcelableArrayListExtra(INTENT_EXTRA_PARAM_TRACK_MODEL_LIST);
             mTrackModelListIndex = intent.getIntExtra(INTENT_EXTRA_PARAM_TRACK_MODEL_LIST_INDEX, 0);
-            final TrackModel trackModel = mTrackModelList.get(mCurrentPlayingSong);
+            final TrackModel trackModel = mTrackModelList.get(mCurrentPlayingTrack);
             mPlaybackState = new PlaybackState();
             setTrack(trackModel);
         }
@@ -121,6 +132,21 @@ public class AudioStreamService extends Service
         mMediaPlayer.setOnPreparedListener(this);
         mMediaPlayer.setOnErrorListener(this);
         mMediaPlayer.setOnCompletionListener(this);
+
+        // Start a new MediaSession
+        ComponentName eventReceiver = new ComponentName(getPackageName(),
+                PlaybackNotificationManager.class.getName());
+        PendingIntent buttonReceiverIntent = PendingIntent.getBroadcast(
+                this,
+                0,
+                new Intent(ACTION_MEDIA_BUTTONS),
+                PendingIntent.FLAG_UPDATE_CURRENT
+        );
+        mSession = new MediaSessionCompat(this, TAG, eventReceiver, buttonReceiverIntent);
+        mSession.setCallback(new MediaSessionCallback());
+        mSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
+                MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
+        mPlaybackNotificationManager = new PlaybackNotificationManager(this);
     }
 
     @Override
@@ -245,23 +271,35 @@ public class AudioStreamService extends Service
     }
 
     private void playSong(int trackModelListIndex) {
-        mCurrentPlayingSong = trackModelListIndex;
-        setTrack(mTrackModelList.get(mCurrentPlayingSong));
+        mCurrentPlayingTrack = trackModelListIndex;
+        setTrack(mTrackModelList.get(mCurrentPlayingTrack));
+    }
+
+    public int getCurrentPlayingTrack() {
+        return mCurrentPlayingTrack;
+    }
+
+    public List<TrackModel> getTrackModelList() {
+        return mTrackModelList;
+    }
+
+    public MediaSessionCompat.Token getSessionToken() {
+        return mSession.getSessionToken();
     }
 
     public void playNextTrack() {
-        if (mCurrentPlayingSong < (mTrackModelList.size() - 1)) {
-            playSong(mCurrentPlayingSong + 1);
-            mCurrentPlayingSong = mCurrentPlayingSong + 1;
+        if (mCurrentPlayingTrack < (mTrackModelList.size() - 1)) {
+            playSong(mCurrentPlayingTrack + 1);
+            mCurrentPlayingTrack = mCurrentPlayingTrack + 1;
         } else {
             playSong(mTrackModelListIndex);
         }
     }
 
     public void playPreviousTrack() {
-        if (mCurrentPlayingSong > 0) {
-            playSong(mCurrentPlayingSong - 1);
-            mCurrentPlayingSong = mCurrentPlayingSong - 1;
+        if (mCurrentPlayingTrack > 0) {
+            playSong(mCurrentPlayingTrack - 1);
+            mCurrentPlayingTrack = mCurrentPlayingTrack - 1;
         } else {
             playSong(mTrackModelListIndex);
         }
@@ -274,5 +312,41 @@ public class AudioStreamService extends Service
 
     private void updateState(PlaybackState playbackState) {
         BusProvider.getInstance().post(playbackState);
+        if (playbackState.isPlaying() || playbackState.isPaused()) {
+            mPlaybackNotificationManager.startNotification();
+        }
+    }
+
+    private final class MediaSessionCallback extends MediaSessionCompat.Callback {
+
+        @Override
+        public void onPlay() {
+            playTrack();
+        }
+
+        @Override
+        public void onSeekTo(long position) {
+            seekTo((int) position);
+        }
+
+        @Override
+        public void onPause() {
+            pauseTrack();
+        }
+
+        @Override
+        public void onStop() {
+            mMediaPlayer.stop();
+        }
+
+        @Override
+        public void onSkipToNext() {
+            playNextTrack();
+        }
+
+        @Override
+        public void onSkipToPrevious() {
+            playPreviousTrack();
+        }
     }
 }
