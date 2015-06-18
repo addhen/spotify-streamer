@@ -8,7 +8,6 @@ import com.addhen.spotify.state.PlaybackState;
 import com.addhen.spotify.state.State;
 import com.squareup.otto.Produce;
 
-import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -25,7 +24,7 @@ import java.util.List;
 
 public class AudioStreamService extends Service
         implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
-        MediaPlayer.OnErrorListener {
+        MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener {
 
     public static String TAG = AudioStreamService.class.getSimpleName();
 
@@ -38,8 +37,6 @@ public class AudioStreamService extends Service
     private static PowerManager.WakeLock mStartingService = null;
 
     private static WifiManager.WifiLock wifilock = null;
-
-    private NotificationManager notificationManager;
 
     private MediaPlayer mMediaPlayer;
 
@@ -171,6 +168,16 @@ public class AudioStreamService extends Service
         return mAudioStreamBinder;
     }
 
+    @Override
+    public boolean onInfo(MediaPlayer mp, int what, int extra) {
+        if (what == MediaPlayer.MEDIA_INFO_BUFFERING_START) {
+            updateState(mPlaybackState.sendState(State.BUFFERING));
+        } else if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END) {
+            updateState(mPlaybackState.sendState(State.PLAYING));
+        }
+        return false;
+    }
+
     public class AudioStreamServiceBinder extends Binder {
 
         public AudioStreamService getAudoStreamService() {
@@ -229,7 +236,8 @@ public class AudioStreamService extends Service
         } catch (IllegalStateException e) {
             // For some reason this exception get thrown
             // when I destroy the fragment by navigating away using the back button.
-            // No matter what I do, I can't escape it. I call getCurrentPosition upon
+            // No matter what I do, I can't escape it. I'm calling getCurrentPosition upon destorying
+            // the activity
             // TODO: Improve code so this is not called when navigating away from the now playing screen
             e.printStackTrace();
             return 0;
@@ -242,14 +250,11 @@ public class AudioStreamService extends Service
     }
 
     public void playNextTrack() {
-        //setViewGone(mPlaybackNext, false);
         if (mCurrentPlayingSong < (mTrackModelList.size() - 1)) {
             playSong(mCurrentPlayingSong + 1);
             mCurrentPlayingSong = mCurrentPlayingSong + 1;
         } else {
-            // Play the original strong passed from the intent
             playSong(mTrackModelListIndex);
-            //setViewGone(mPlaybackNext, true);
         }
     }
 

@@ -1,12 +1,15 @@
 package com.addhen.spotify.state;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 public class PlaybackState {
 
     public final State state;
 
     private Exception mException;
 
-    public PlaybackState(State state, Exception exception) {
+    public PlaybackState(@NonNull State state, @Nullable Exception exception) {
         this.state = state;
         mException = exception;
     }
@@ -15,11 +18,11 @@ public class PlaybackState {
         this(State.LOADING, null);
     }
 
-    public PlaybackState sendState(State state, Exception exception) {
+    public PlaybackState sendState(@NonNull State state, @Nullable Exception exception) {
         return new PlaybackState(state, exception);
     }
 
-    public PlaybackState sendState(State state) {
+    public PlaybackState sendState(@NonNull State state) {
         return sendState(state, null);
     }
 
@@ -37,6 +40,10 @@ public class PlaybackState {
 
     public boolean isLoading() {
         return state == State.LOADING;
+    }
+
+    public boolean isBuffering() {
+        return state == State.BUFFERING;
     }
 
     public boolean isError() {

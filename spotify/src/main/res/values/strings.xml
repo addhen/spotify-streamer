@@ -11,6 +11,8 @@
     <string name="skip_next">Skip next</string>
     <string name="skip_previous">Skip previous</string>
     <string name="playback_background">Playback album art</string>
+    <string name="playback_loading">Loading music...</string>
+    <string name="playback_buffering">Buffering...</string>
     <string name="loading">Loading...</string>
     <string name="playback_error">Error occured during playback</string>
     <string name="now_playing">Now playing</string>

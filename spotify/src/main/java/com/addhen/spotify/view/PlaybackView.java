@@ -16,5 +16,5 @@ public interface PlaybackView extends UiView {
 
     void loadCoverArt(String url);
 
-    void musicPlayerPrepared();
+    void buffering();
 }

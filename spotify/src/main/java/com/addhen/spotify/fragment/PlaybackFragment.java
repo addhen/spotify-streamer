@@ -72,6 +72,9 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
     @InjectView(R.id.playbackTrackName)
     TextView mPlaybackTrackName;
 
+    @InjectView(R.id.playbackStatusInfo)
+    TextView mPlaybackStatusInfo;
+
     @InjectView(R.id.playbackTrackLoadingProgress)
     ProgressBar mPlaybackTrackLoadingProgress;
 
@@ -190,8 +193,10 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
     }
 
     @Override
-    public void musicPlayerPrepared() {
-        mControllers.setVisibility(View.VISIBLE);
+    public void buffering() {
+        mPlaybackTrackLoadingProgress.setVisibility(View.VISIBLE);
+        mPlaybackStatusInfo.setText(R.string.playback_buffering);
+        mPlaybackStatusInfo.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -260,6 +265,7 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
     @Override
     public void playing() {
         mPlaybackTrackLoadingProgress.setVisibility(View.INVISIBLE);
+        mPlaybackStatusInfo.setVisibility(View.INVISIBLE);
         mPlaybackPause.setImageDrawable(mPauseDrawable);
         mControllers.setVisibility(View.VISIBLE);
         updateDuration();
@@ -275,6 +281,7 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
     @Override
     public void stopped() {
         mPlaybackTrackLoadingProgress.setVisibility(View.INVISIBLE);
+        mPlaybackStatusInfo.setVisibility(View.INVISIBLE);
         mPlaybackPause.setImageDrawable(mPlayDrawable);
     }
 
@@ -291,12 +298,15 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
     @Override
     public void loading() {
         mPlaybackTrackLoadingProgress.setVisibility(View.VISIBLE);
+        mPlaybackStatusInfo.setText(R.string.playback_loading);
+        mPlaybackStatusInfo.setVisibility(View.VISIBLE);
         mControllers.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void hideLoading() {
         mPlaybackTrackLoadingProgress.setVisibility(View.GONE);
+        mPlaybackStatusInfo.setVisibility(View.INVISIBLE);
         mControllers.setVisibility(View.VISIBLE);
     }
 
