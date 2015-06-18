@@ -36,11 +36,15 @@
         <activity
                 android:name=".activity.PlaybackActivity"
                 android:label="@string/now_playing"
-                android:theme="@style/AppTheme.PopupActivity">
+                android:theme="@style/AppTheme.PopupActivity"
+                android:parentActivityName=".activity.PlaybackActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".activity.PlaybackActivity"/>
         </activity>
         <activity
                 android:name=".activity.SettingsActivity"

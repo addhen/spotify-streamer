@@ -13,6 +13,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
@@ -75,23 +76,18 @@ public class PlaybackActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         boolean isTwoPane = getResources().getBoolean(R.bool.large_layout);
         if (isTwoPane) {
-            setSupportActionBar(mToolbar);
-            if (getSupportActionBar() != null) {
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                getSupportActionBar().setTitle(R.string.now_playing);
+            if (mToolbar != null) {
+                setSupportActionBar(mToolbar);
+                if (getSupportActionBar() != null) {
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                    getSupportActionBar().setTitle(R.string.now_playing);
+                }
             }
         }
         setupIntent(savedInstanceState);
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        setIntent(intent);
-        setupIntent(null);
-    }
-
-    private void setupIntent(Bundle savedInstanceState) {
+    private void setupIntent(@Nullable Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             mTrackModelList = getIntent().getParcelableArrayListExtra(
                     INTENT_EXTRA_PARAM_TRACK_MODEL_LIST);
@@ -169,10 +165,7 @@ public class PlaybackActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         final int id = item.getItemId();
-        if (id == android.R.id.home) {
-            finish();
-            return true;
-        } else if (id == R.id.menu_playback_share) {
+        if (id == R.id.menu_playback_share) {
             final TrackModel trackModel = mPlaybackFragment.getCurrentlyPlayingSong();
             setShareIntent(trackModel);
             return true;
