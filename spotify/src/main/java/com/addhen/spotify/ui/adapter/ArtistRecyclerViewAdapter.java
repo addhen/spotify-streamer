@@ -1,4 +1,4 @@
-package com.addhen.spotify.adapter;
+package com.addhen.spotify.ui.adapter;
 
 import com.addhen.spotify.R;
 import com.addhen.spotify.databinding.ArtistListItemBinding;

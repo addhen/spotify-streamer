@@ -1,4 +1,4 @@
-package com.addhen.spotify.activity;
+package com.addhen.spotify.ui.activity;
 
 import android.app.Fragment;
 import android.content.Intent;

@@ -1,4 +1,4 @@
-package com.addhen.spotify.listener;
+package com.addhen.spotify.ui.listener;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

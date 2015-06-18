@@ -10,7 +10,7 @@
                 android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
-                tools:context="com.addhen.spotify.fragment.ArtistFragment">
+                tools:context="com.addhen.spotify.ui.fragment.ArtistFragment">
     <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

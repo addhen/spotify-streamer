@@ -1,9 +1,9 @@
-package com.addhen.spotify.activity;
+package com.addhen.spotify.ui.activity;
 
 import com.addhen.spotify.BusProvider;
 import com.addhen.spotify.R;
-import com.addhen.spotify.fragment.ArtistFragment;
-import com.addhen.spotify.fragment.TrackFragment;
+import com.addhen.spotify.ui.fragment.ArtistFragment;
+import com.addhen.spotify.ui.fragment.TrackFragment;
 import com.addhen.spotify.model.ArtistModel;
 import com.addhen.spotify.state.ArtistEvent;
 import com.addhen.spotify.state.SearchClearedEvent;
@@ -20,7 +20,7 @@ import java.util.List;
 public class MainActivity extends BaseActivity {
 
     private static final String INTENT_PARAM_ARTIST_MODEL_LIST
-            = "com.addhen.spotify.activity.INTENT_PARAM_ARTIST_MODEL_LIST";
+            = "com.addhen.spotify.ui.activity.INTENT_PARAM_ARTIST_MODEL_LIST";
 
     private ArtistFragment mArtistFragment;
 

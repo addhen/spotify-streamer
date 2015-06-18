@@ -1,7 +1,7 @@
-package com.addhen.spotify.activity;
+package com.addhen.spotify.ui.activity;
 
 import com.addhen.spotify.R;
-import com.addhen.spotify.fragment.SettingsFragment;
+import com.addhen.spotify.ui.fragment.SettingsFragment;
 
 import android.content.Context;
 import android.content.Intent;

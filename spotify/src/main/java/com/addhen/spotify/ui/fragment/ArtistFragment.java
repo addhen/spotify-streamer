@@ -1,9 +1,9 @@
-package com.addhen.spotify.fragment;
+package com.addhen.spotify.ui.fragment;
 
 import com.addhen.spotify.BusProvider;
 import com.addhen.spotify.R;
-import com.addhen.spotify.adapter.ArtistRecyclerViewAdapter;
-import com.addhen.spotify.listener.RecyclerItemClickListener;
+import com.addhen.spotify.ui.adapter.ArtistRecyclerViewAdapter;
+import com.addhen.spotify.ui.listener.RecyclerItemClickListener;
 import com.addhen.spotify.model.ArtistModel;
 import com.addhen.spotify.presenter.ArtistPresenter;
 import com.addhen.spotify.state.ArtistEvent;

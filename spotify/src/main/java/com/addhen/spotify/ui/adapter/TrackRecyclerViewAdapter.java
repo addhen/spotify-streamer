@@ -1,7 +1,7 @@
-package com.addhen.spotify.adapter;
+package com.addhen.spotify.ui.adapter;
 
 import com.addhen.spotify.R;
-import com.addhen.spotify.activity.PlaybackActivity;
+import com.addhen.spotify.ui.activity.PlaybackActivity;
 import com.addhen.spotify.databinding.TrackListItemBinding;
 import com.addhen.spotify.model.TrackModel;
 import com.squareup.picasso.Picasso;

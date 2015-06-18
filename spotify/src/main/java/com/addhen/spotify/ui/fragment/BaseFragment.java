@@ -1,4 +1,4 @@
-package com.addhen.spotify.fragment;
+package com.addhen.spotify.ui.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;

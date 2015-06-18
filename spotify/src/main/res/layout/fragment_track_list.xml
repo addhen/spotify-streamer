@@ -8,7 +8,7 @@
              android:layout_marginRight="@dimen/activity_vertical_margin"
              android:layout_marginEnd="@dimen/activity_vertical_margin"
              android:layout_marginTop="@dimen/activity_vertical_margin"
-             tools:context="com.addhen.spotify.fragment.ArtistFragment">
+             tools:context="com.addhen.spotify.ui.fragment.ArtistFragment">
     <android.support.v7.widget.RecyclerView
             android:id="@+id/trackRecyclerView"
             android:layout_width="match_parent"

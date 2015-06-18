@@ -6,10 +6,10 @@
               android:baselineAligned="false"
               android:divider="?android:attr/dividerHorizontal"
               android:orientation="horizontal"
-              tools:context="com.addhen.spotify.activity.MainActivity">
+              tools:context="com.addhen.spotify.ui.activity.MainActivity">
     <fragment
             android:id="@+id/fragment_artist_list"
-            android:name="com.addhen.spotify.fragment.ArtistFragment"
+            android:name="com.addhen.spotify.ui.fragment.ArtistFragment"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="4"

@@ -1,7 +1,7 @@
-package com.addhen.spotify.fragment;
+package com.addhen.spotify.ui.fragment;
 
 import com.addhen.spotify.R;
-import com.addhen.spotify.adapter.TrackRecyclerViewAdapter;
+import com.addhen.spotify.ui.adapter.TrackRecyclerViewAdapter;
 import com.addhen.spotify.model.TrackModel;
 import com.addhen.spotify.presenter.TrackPresenter;
 import com.addhen.spotify.util.Utils;

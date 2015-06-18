@@ -1,8 +1,8 @@
-package com.addhen.spotify.activity;
+package com.addhen.spotify.ui.activity;
 
 import com.addhen.spotify.BusProvider;
 import com.addhen.spotify.R;
-import com.addhen.spotify.fragment.PlaybackFragment;
+import com.addhen.spotify.ui.fragment.PlaybackFragment;
 import com.addhen.spotify.model.TrackModel;
 import com.addhen.spotify.service.AudioStreamService;
 
@@ -29,16 +29,16 @@ import butterknife.Optional;
 public class PlaybackActivity extends BaseActivity {
 
     private static final String INTENT_EXTRA_PARAM_TRACK_MODEL_LIST
-            = "com.addhen.spotify.activity.INTENT_PARAM_TRACK_MODEL_LIST";
+            = "com.addhen.spotify.ui.activity.INTENT_PARAM_TRACK_MODEL_LIST";
 
     private static final String INTENT_EXTRA_PARAM_TRACK_MODEL_LIST_INDEX
-            = "com.addhen.spotify.activity.INTENT_PARAM_TRACK_MODEL_LIST_INDEX";
+            = "com.addhen.spotify.ui.activity.INTENT_PARAM_TRACK_MODEL_LIST_INDEX";
 
     private static final String BUNDLE_STATE_PARAM_TRACK_LIST
-            = "com.addhen.spotify.activity.STATE_PARAM_TRACK_MODEL_LIST";
+            = "com.addhen.spotify.ui.activity.STATE_PARAM_TRACK_MODEL_LIST";
 
     private static final String BUNDLE_STATE_PARAM_TRACK_MODEL_LIST_INDEX
-            = "com.addhen.spotify.activity.BUNDLE_STATE_PARAM_TRACK_MODEL_LIST_INDEX";
+            = "com.addhen.spotify.ui.activity.BUNDLE_STATE_PARAM_TRACK_MODEL_LIST_INDEX";
 
     private List<TrackModel> mTrackModelList;
 
