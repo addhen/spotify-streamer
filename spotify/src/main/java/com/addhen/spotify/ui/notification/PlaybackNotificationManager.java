@@ -1,11 +1,13 @@
 package com.addhen.spotify.ui.notification;
 
+import com.addhen.spotify.BusProvider;
 import com.addhen.spotify.R;
 import com.addhen.spotify.model.TrackModel;
 import com.addhen.spotify.service.AudioStreamService;
 import com.addhen.spotify.state.PlaybackState;
 import com.addhen.spotify.ui.activity.PlaybackActivity;
 import com.addhen.spotify.ui.fragment.SettingsFragment;
+import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -74,6 +76,7 @@ public class PlaybackNotificationManager extends BroadcastReceiver {
 
     private MediaSessionCompat.Token mSessionToken;
 
+
     private final Target mTarget = new Target() {
         @Override
         public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
@@ -114,12 +117,9 @@ public class PlaybackNotificationManager extends BroadcastReceiver {
     public PlaybackNotificationManager(AudioStreamService audioStreamService) {
         mAudioStreamService = audioStreamService;
         updateSessionToken();
-
         mNotificationColor = Color.DKGRAY;
-
         mNotificationManager = (NotificationManager) audioStreamService
                 .getSystemService(Context.NOTIFICATION_SERVICE);
-
         String pkg = mAudioStreamService.getPackageName();
         mPauseIntent = PendingIntent.getBroadcast(mAudioStreamService, REQUEST_CODE,
                 new Intent(INTENT_ACTION_PAUSE).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT);
@@ -160,8 +160,8 @@ public class PlaybackNotificationManager extends BroadcastReceiver {
             } catch (IllegalArgumentException ex) {
                 // Do nothing
             }
-            mAudioStreamService.stopForeground(true);
         }
+        mAudioStreamService.stopForeground(true);
     }
 
     private void updateSessionToken() {
@@ -187,27 +187,32 @@ public class PlaybackNotificationManager extends BroadcastReceiver {
         @Override
         public void onPlaybackStateChanged(PlaybackStateCompat state) {
             super.onPlaybackStateChanged(state);
-            mPlaybackState = mAudioStreamService.produceLastState();
             if (mPlaybackState.isStopped()) {
                 stopNotification();
             } else {
-                Notification notification = createNotification();
-                if (notification != null) {
-                    mNotificationManager.notify(NOTIFICATION_ID, notification);
-                }
+                showNotification();
             }
         }
 
         @Override
         public void onMetadataChanged(MediaMetadataCompat metadata) {
             super.onMetadataChanged(metadata);
+            showNotification();
         }
 
         @Override
         public void onSessionDestroyed() {
             super.onSessionDestroyed();
+            updateSessionToken();
         }
     };
+
+    private void showNotification() {
+        Notification notification = createNotification();
+        if (notification != null) {
+            mNotificationManager.notify(NOTIFICATION_ID, notification);
+        }
+    }
 
     private Notification createNotification() {
 
@@ -227,7 +232,9 @@ public class PlaybackNotificationManager extends BroadcastReceiver {
         }
         if (trackModel.coverPhoto != null) {
             Picasso.with(mAudioStreamService.getApplicationContext())
-                    .load(R.drawable.ic_default_music_playing).into(mTarget);
+                    .load(trackModel.coverPhoto)
+                    .placeholder(R.drawable.ic_default_music_playing).into(
+                    mTarget);
 
         }
         mNotificationBuilder
@@ -292,5 +299,26 @@ public class PlaybackNotificationManager extends BroadcastReceiver {
                     .setUsesChronometer(false);
         }
         builder.setOngoing(mPlaybackState.isPlaying());
+    }
+
+    @Subscribe
+    public void updatePlaybackState(final PlaybackState playbackState) {
+        if (playbackState == null) {
+            return;
+        }
+        mPlaybackState = playbackState;
+        if (playbackState.isStopped()) {
+            stopNotification();
+        } else {
+            showNotification();
+        }
+    }
+
+    public void registerEvent() {
+        BusProvider.getInstance().register(this);
+    }
+
+    public void unregisterEvent() {
+        BusProvider.getInstance().unregister(this);
     }
 }

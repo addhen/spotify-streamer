@@ -75,15 +75,13 @@ public class AudioStreamService extends Service
     synchronized private static WifiManager.WifiLock getPhoneWifiLock(
             Context context) {
         if (wifilock == null) {
-            WifiManager manager = (WifiManager) context
-                    .getSystemService(Context.WIFI_SERVICE);
-            wifilock = manager.createWifiLock(WifiManager.WIFI_MODE_FULL,
-                    TAG);
+            WifiManager manager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            wifilock = manager.createWifiLock(WifiManager.WIFI_MODE_FULL, TAG);
         }
         return wifilock;
     }
 
-    public static void bindWakefulTask(Context context, Intent intent) {
+    public static void sendWakefulTask(Context context, Intent intent) {
 
         if (!getPhoneWakeLock(context.getApplicationContext()).isHeld()) {
             getPhoneWakeLock(context.getApplicationContext()).acquire();
@@ -103,6 +101,7 @@ public class AudioStreamService extends Service
             mTrackModelList = intent
                     .getParcelableArrayListExtra(INTENT_EXTRA_PARAM_TRACK_MODEL_LIST);
             mTrackModelListIndex = intent.getIntExtra(INTENT_EXTRA_PARAM_TRACK_MODEL_LIST_INDEX, 0);
+            mCurrentPlayingTrack = mTrackModelListIndex;
             final TrackModel trackModel = mTrackModelList.get(mCurrentPlayingTrack);
             mPlaybackState = new PlaybackState();
             setTrack(trackModel);
@@ -147,12 +146,13 @@ public class AudioStreamService extends Service
         mSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
                 MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
         mPlaybackNotificationManager = new PlaybackNotificationManager(this);
+        mPlaybackNotificationManager.registerEvent();
     }
 
     @Override
     public int onStartCommand(final Intent intent, int flags, int startId) {
         handleIntent(intent);
-        return START_NOT_STICKY;
+        return START_STICKY;
     }
 
     private void handleIntent(Intent intent) {
@@ -182,10 +182,13 @@ public class AudioStreamService extends Service
             getPhoneWakeLock(this.getApplicationContext()).release();
         }
         BusProvider.getInstance().unregister(this);
+        mPlaybackNotificationManager.unregisterEvent();
+        mPlaybackNotificationManager.stopNotification();
         if (mMediaPlayer != null) {
             mMediaPlayer.reset();
             mMediaPlayer.release();
         }
+        mSession.release();
     }
 
     @Nullable
@@ -294,6 +297,7 @@ public class AudioStreamService extends Service
         } else {
             playSong(mTrackModelListIndex);
         }
+        updateState(mPlaybackState.sendState(State.SKIPPED_NEXT));
     }
 
     public void playPreviousTrack() {
@@ -303,6 +307,7 @@ public class AudioStreamService extends Service
         } else {
             playSong(mTrackModelListIndex);
         }
+        updateState(mPlaybackState.sendState(State.SKIPPED_PREVIOUS));
     }
 
     @Produce
@@ -337,6 +342,8 @@ public class AudioStreamService extends Service
         @Override
         public void onStop() {
             mMediaPlayer.stop();
+            mPlaybackNotificationManager.stopNotification();
+            updateState(mPlaybackState.sendState(State.STOPPED));
         }
 
         @Override

@@ -50,6 +50,14 @@ public class PlaybackState {
         return state == State.ERROR;
     }
 
+    public boolean isSkippedNext() {
+        return state == State.SKIPPED_NEXT;
+    }
+
+    public boolean isSkippedPrevious() {
+        return state == State.SKIPPED_NEXT;
+    }
+
     public String getError() {
         if (mException == null) {
             return null;

@@ -139,7 +139,6 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
                 .getParcelableArrayList(ARGUMENT_KEY_TRACK_MODEL_LIST);
         mTrackModelListIndex = getArguments().getInt(ARGUMENT_KEY_TRACK_MODEL_LIST_INDEX,
                 0);
-        playSong(mTrackModelListIndex);
         mPlaybackSeekbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener()
 
                                                     {
@@ -338,33 +337,33 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
         }
     }
 
-    private void playSong(int trackModelListIndex) {
-        mCurrentPlayingSong = trackModelListIndex;
-        final TrackModel trackModel = mTrackModelList.get(mCurrentPlayingSong);
+    private void updateCurrentlyPlayInfo() {
+        final TrackModel trackModel = mTrackModelList
+                .get(mAudioStreamService.getCurrentPlayingTrack());
         mPlaybackPresenter.setTrackModel(trackModel.coverPhoto);
         updateMediaDescription(trackModel);
     }
 
     private void playNextTrack() {
-        if (mCurrentPlayingSong < (mTrackModelList.size() - 1)) {
-            playSong(mCurrentPlayingSong + 1);
+        /*if (mCurrentPlayingSong < (mTrackModelList.size() - 1)) {
+            updateCurrentlyPlayInfo(mCurrentPlayingSong + 1);
             mCurrentPlayingSong = mCurrentPlayingSong + 1;
         } else {
-            playSong(mTrackModelListIndex);
-        }
+            updateCurrentlyPlayInfo(mTrackModelListIndex);
+        }*/
         if (mAudioStreamService != null) {
             mAudioStreamService.playNextTrack();
         }
     }
 
     private void playPreviousTrack() {
-        if (mCurrentPlayingSong > 0) {
-            playSong(mCurrentPlayingSong - 1);
+        /*if (mCurrentPlayingSong > 0) {
+            updateCurrentlyPlayInfo(mCurrentPlayingSong - 1);
             mCurrentPlayingSong = mCurrentPlayingSong - 1;
         } else {
             // Play the original index of the song passed from the intent.
-            playSong(mTrackModelListIndex);
-        }
+            updateCurrentlyPlayInfo(mTrackModelListIndex);
+        }*/
         if (mAudioStreamService != null) {
             mAudioStreamService.playPreviousTrack();
         }
@@ -379,16 +378,24 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
         if (playbackState == null) {
             return;
         }
-        if (playbackState.isPlaying()) {
-            mPlaybackPresenter.playTrack();
-        } else if (playbackState.isPaused()) {
-            mPlaybackPresenter.pauseTrack();
-        } else if (playbackState.isStopped()) {
-            stopped();
-        } else if (playbackState.isLoading()) {
-            loading();
-        } else if (playbackState.isError()) {
-            showError(playbackState.getError());
+        switch (playbackState.state) {
+            case PLAYING:
+                updateCurrentlyPlayInfo();
+                mPlaybackPresenter.playTrack();
+                break;
+            case PAUSED:
+                mPlaybackPresenter.pauseTrack();
+                break;
+            case LOADING:
+                loading();
+                break;
+            case ERROR:
+                showError(playbackState.getError());
+                break;
+            case SKIPPED_NEXT:
+            case SKIPPED_PREVIOUS:
+                updateCurrentlyPlayInfo();
+                break;
         }
     }
 }
