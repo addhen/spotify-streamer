@@ -26,11 +26,16 @@ public class TrackFragment extends BaseFragment implements TrackView {
 
     private static final String ARGUMENT_KEY_ARTIST_ID = "com.addhen.spotify.ARGUMENT_ARTIST_ID";
 
+    private static final String BUNDLE_STATE_TRACK_SELECTED
+            = "com.addhen.spotify.BUNDLE_STATE_TRACK_SELECTED";
+
     private TrackPresenter mTrackPresenter;
 
     private TrackRecyclerViewAdapter mTrackRecyclerViewAdapter;
 
     private List<TrackModel> mTrackList;
+
+    private int mPosition;
 
     @InjectView(R.id.empty_list_view)
     TextView mEmptyView;
@@ -64,10 +69,14 @@ public class TrackFragment extends BaseFragment implements TrackView {
         super.onActivityCreated(savedInstanceState);
         mTrackPresenter.setView(this);
         final String artistId = getArguments().getString(ARGUMENT_KEY_ARTIST_ID);
+
         if (Utils.isEmpty(mTrackList)) {
             final String countryCode = getSharedPreferences()
                     .getString(SettingsFragment.PLAYBACK_COUNTRY_CODES, "US");
             mTrackPresenter.setTrack(artistId, countryCode);
+        }
+        if (savedInstanceState != null) {
+            mPosition = savedInstanceState.getInt(BUNDLE_STATE_TRACK_SELECTED, 0);
         }
     }
 
@@ -81,6 +90,12 @@ public class TrackFragment extends BaseFragment implements TrackView {
     public void onPause() {
         super.onPause();
         mTrackPresenter.pause();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putInt(BUNDLE_STATE_TRACK_SELECTED, mPosition);
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override

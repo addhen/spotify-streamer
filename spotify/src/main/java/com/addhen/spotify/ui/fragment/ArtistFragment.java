@@ -2,12 +2,12 @@ package com.addhen.spotify.ui.fragment;
 
 import com.addhen.spotify.BusProvider;
 import com.addhen.spotify.R;
-import com.addhen.spotify.ui.adapter.ArtistRecyclerViewAdapter;
-import com.addhen.spotify.ui.listener.RecyclerItemClickListener;
 import com.addhen.spotify.model.ArtistModel;
 import com.addhen.spotify.presenter.ArtistPresenter;
-import com.addhen.spotify.state.ArtistEvent;
-import com.addhen.spotify.state.SearchClearedEvent;
+import com.addhen.spotify.event.ArtistEvent;
+import com.addhen.spotify.event.SearchClearedEvent;
+import com.addhen.spotify.ui.adapter.ArtistRecyclerViewAdapter;
+import com.addhen.spotify.ui.listener.RecyclerItemClickListener;
 import com.addhen.spotify.util.Utils;
 import com.addhen.spotify.view.ArtistView;
 
@@ -98,8 +98,7 @@ public class ArtistFragment extends BaseFragment implements ArtistView {
     }
 
     private void setRecyclerView(RecyclerView recyclerView) {
-        mArtistRecyclerViewAdapter = new ArtistRecyclerViewAdapter(getActivity().getApplication(),
-                mEmptyView);
+        mArtistRecyclerViewAdapter = new ArtistRecyclerViewAdapter(mEmptyView);
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
         recyclerView.setAdapter(mArtistRecyclerViewAdapter);
         if (!Utils.isEmpty(mArtistList)) {

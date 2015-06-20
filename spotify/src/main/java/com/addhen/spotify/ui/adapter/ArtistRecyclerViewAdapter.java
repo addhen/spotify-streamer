@@ -5,13 +5,11 @@ import com.addhen.spotify.databinding.ArtistListItemBinding;
 import com.addhen.spotify.model.ArtistModel;
 import com.squareup.picasso.Picasso;
 
-import android.content.Context;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.UiThread;
 import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,17 +29,11 @@ import java.util.List;
 public class ArtistRecyclerViewAdapter
         extends RecyclerView.Adapter<ArtistRecyclerViewAdapter.ViewHolder> {
 
-    private final TypedValue mTypedValue = new TypedValue();
-
-    private int mBackground;
-
     private List<ArtistModel> mArtistList;
 
     private View mEmptyView;
 
-    public ArtistRecyclerViewAdapter(final Context context, final View emptyView) {
-        context.getTheme().resolveAttribute(R.attr.selectableItemBackground, mTypedValue, true);
-        mBackground = mTypedValue.resourceId;
+    public ArtistRecyclerViewAdapter(final View emptyView) {
         mArtistList = new ArrayList<>();
         mEmptyView = emptyView;
         //Calling this to set the emptyView
@@ -71,7 +63,6 @@ public class ArtistRecyclerViewAdapter
         final ArtistListItemBinding listItemBinding = DataBindingUtil
                 .inflate(inflater, R.layout.artist_list_item, parent, false);
         final View view = listItemBinding.getRoot();
-        view.setBackgroundResource(mBackground);
         return new ViewHolder(view, listItemBinding);
     }
 
@@ -93,11 +84,8 @@ public class ArtistRecyclerViewAdapter
 
         private final ArtistListItemBinding mArtistListItemBinding;
 
-        private final View mView;
-
         public ViewHolder(final View view, final ArtistListItemBinding artistListItemBinding) {
             super(view);
-            mView = view;
             mArtistListItemBinding = artistListItemBinding;
         }
 

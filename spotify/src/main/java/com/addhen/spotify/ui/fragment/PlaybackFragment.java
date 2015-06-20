@@ -11,10 +11,14 @@ import com.addhen.spotify.view.PlaybackView;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.ImageView;
@@ -88,15 +92,11 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
 
     private int mTrackModelListIndex;
 
-    private int mCurrentPlayingSong;
-
     private Drawable mPauseDrawable;
 
     private Drawable mPlayDrawable;
 
     private PlaybackPresenter mPlaybackPresenter;
-
-    private AudioStreamService mAudioStreamService;
 
     private final Runnable mUpdateProgressTask = new Runnable() {
         @Override
@@ -106,6 +106,10 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
     };
 
     private ScheduledFuture<?> mScheduleFuture;
+
+    private AudioStreamService mAudioStreamService;
+
+    private Intent mMusicServiceIntent;
 
     public PlaybackFragment() {
         super(R.layout.fragmet_track_playback, 0);
@@ -159,11 +163,8 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
                                                         @Override
                                                         public void onStopTrackingTouch(
                                                                 SeekBar seekBar) {
-                                                            if (mAudioStreamService != null) {
-                                                                mAudioStreamService
-                                                                        .seekTo(seekBar
-                                                                                .getProgress());
-                                                            }
+                                                            mAudioStreamService
+                                                                    .seekTo(seekBar.getProgress());
                                                             mPlaybackPresenter.seekTo();
                                                         }
                                                     }
@@ -188,8 +189,7 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
 
     @Override
     public void loadCoverArt(String url) {
-        Picasso.with(getAppContext()).load(url).placeholder(R.drawable.music_loading_bg).into(
-                mBackgroundImage);
+        Picasso.with(getAppContext()).load(url).into(mBackgroundImage);
     }
 
     @Override
@@ -211,6 +211,7 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
         super.onResume();
         BusProvider.getInstance().register(this);
         mPlaybackPresenter.resume();
+        startAudioService((ArrayList) mTrackModelList, mTrackModelListIndex);
     }
 
     @Override
@@ -228,9 +229,11 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
 
     @Override
     public void onDestroy() {
+        getActivity().getApplication().unbindService(mConnection);
+        mAudioStreamService = null;
+        mExecutorService.shutdown();
         super.onDestroy();
         mPlaybackPresenter.destroy();
-        mExecutorService.shutdown();
     }
 
     @Override
@@ -244,10 +247,6 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
         mTrackModelListIndex = trackModelListIndex;
     }
 
-    public void setAudioStreamService(AudioStreamService audioStreamService) {
-        mAudioStreamService = audioStreamService;
-    }
-
     @OnClick({R.id.playbackPrevious, R.id.playbackNext, R.id.playbackPause})
     public void controlPressed(View view) {
         final int id = view.getId();
@@ -256,9 +255,7 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
         } else if (id == R.id.playbackNext) {
             playNextTrack();
         } else if (id == R.id.playbackPause) {
-            if (mAudioStreamService != null) {
-                mAudioStreamService.playTrack();
-            }
+            mAudioStreamService.playTrack();
         }
     }
 
@@ -325,11 +322,9 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
     }
 
     private void updateDuration() {
-        if (mAudioStreamService != null) {
-            final int duration = mAudioStreamService.getMediaPlayer().getDuration();
-            mPlaybackSeekbar.setMax(duration);
-            mPlaybackEndTime.setText(Utils.formatMillis(duration));
-        }
+        int duration = mAudioStreamService.getMediaPlayer().getDuration();
+        mPlaybackSeekbar.setMax(duration);
+        mPlaybackEndTime.setText(Utils.formatMillis(duration));
     }
 
     private void updateProgress() {
@@ -358,7 +353,10 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
     }
 
     public TrackModel getCurrentlyPlayingSong() {
-        return mTrackModelList.get(mCurrentPlayingSong);
+        if (mAudioStreamService != null) {
+            return mTrackModelList.get(mAudioStreamService.getCurrentPlayingTrack());
+        }
+        return mTrackModelList.get(mTrackModelListIndex);
     }
 
     @Subscribe
@@ -384,8 +382,32 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
             case SKIPPED_PREVIOUS:
                 updateCurrentlyPlayInfo();
                 break;
-            default:
-                stopped();
         }
     }
+
+
+    public void startAudioService(ArrayList<TrackModel> trackModels, int index) {
+        mMusicServiceIntent = new Intent(getActivity(), AudioStreamService.class);
+        mMusicServiceIntent
+                .putParcelableArrayListExtra(AudioStreamService.INTENT_EXTRA_PARAM_TRACK_MODEL_LIST,
+                        trackModels);
+        mMusicServiceIntent
+                .putExtra(AudioStreamService.INTENT_EXTRA_PARAM_TRACK_MODEL_LIST_INDEX, index);
+        getActivity().getApplication().bindService(mMusicServiceIntent, mConnection,
+                Context.BIND_AUTO_CREATE);
+        AudioStreamService.sendWakefulTask(getActivity(), mMusicServiceIntent);
+    }
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className,
+                IBinder binder) {
+            AudioStreamService.AudioStreamServiceBinder b
+                    = (AudioStreamService.AudioStreamServiceBinder) binder;
+            mAudioStreamService = b.getAudoStreamService();
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+            mAudioStreamService = null;
+        }
+    };
 }

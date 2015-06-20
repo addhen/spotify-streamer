@@ -1,4 +1,4 @@
-package com.addhen.spotify.state;
+package com.addhen.spotify.event;
 
 public class ArtistEvent {
 

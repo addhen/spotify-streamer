@@ -55,7 +55,7 @@ public class TrackRecyclerViewAdapter
 
     public void clearAllItems() {
         mTrackList.clear();
-        onDataSetChanged();
+
     }
 
     @Override

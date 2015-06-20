@@ -3,15 +3,11 @@ package com.addhen.spotify.ui.activity;
 import com.addhen.spotify.BusProvider;
 import com.addhen.spotify.R;
 import com.addhen.spotify.model.TrackModel;
-import com.addhen.spotify.service.AudioStreamService;
 import com.addhen.spotify.ui.fragment.PlaybackFragment;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MenuItemCompat;
@@ -48,10 +44,6 @@ public class PlaybackActivity extends BaseActivity {
 
     private PlaybackFragment mPlaybackFragment;
 
-    private Intent mMusicServiceIntent;
-
-    private AudioStreamService mAudioStreamService;
-
     private ShareActionProvider mShareActionProvider;
 
 
@@ -85,7 +77,6 @@ public class PlaybackActivity extends BaseActivity {
             }
         }
         setupIntent(savedInstanceState);
-        startAudioService((ArrayList) mTrackModelList, mTrackModelListIndex);
     }
 
     private void setupIntent(@Nullable Bundle savedInstanceState) {
@@ -127,41 +118,7 @@ public class PlaybackActivity extends BaseActivity {
     public void onDestroy() {
         super.onDestroy();
         mPlaybackFragment.setTrackModel(mTrackModelList, mTrackModelListIndex);
-        mPlaybackFragment.setAudioStreamService(mAudioStreamService);
-        unbindService(mConnection);
-        stopService(mMusicServiceIntent);
     }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-    }
-
-    private void startAudioService(ArrayList<TrackModel> trackModels, int index) {
-        mMusicServiceIntent = new Intent(PlaybackActivity.this, AudioStreamService.class);
-        mMusicServiceIntent
-                .putParcelableArrayListExtra(AudioStreamService.INTENT_EXTRA_PARAM_TRACK_MODEL_LIST,
-                        trackModels);
-        mMusicServiceIntent
-                .putExtra(AudioStreamService.INTENT_EXTRA_PARAM_TRACK_MODEL_LIST_INDEX, index);
-        bindService(mMusicServiceIntent, mConnection, BIND_AUTO_CREATE);
-        AudioStreamService.sendWakefulTask(PlaybackActivity.this, mMusicServiceIntent);
-    }
-
-    private ServiceConnection mConnection = new ServiceConnection() {
-        public void onServiceConnected(ComponentName className,
-                IBinder binder) {
-            AudioStreamService.AudioStreamServiceBinder b
-                    = (AudioStreamService.AudioStreamServiceBinder) binder;
-            mAudioStreamService = b.getAudoStreamService();
-            mPlaybackFragment.setAudioStreamService(mAudioStreamService);
-        }
-
-        public void onServiceDisconnected(ComponentName className) {
-            mAudioStreamService = null;
-        }
-    };
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
