@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/mini_playback_control"
+                android:id="@+id/miniPlaybackController"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/playback_controls_padding"
                 android:background="@color/error_color"
                 android:layout_gravity="bottom"
+                android:visibility="gone"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentStart="true">
     <ImageView
-            android:id="@+id/album_art"
+            android:id="@+id/selectedTrackAlbumArt"
             android:src="@drawable/ic_default_music_playing"
             android:layout_width="@dimen/playback_controls_albumart_size"
             android:layout_height="@dimen/playback_controls_albumart_size"
@@ -19,19 +20,18 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"/>
     <LinearLayout
-            android:id="@+id/content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/activity_vertical_margin"
             android:layout_marginLeft="@dimen/activity_vertical_margin"
             android:orientation="vertical"
-            android:layout_toEndOf="@id/album_art"
-            android:layout_toRightOf="@id/album_art"
-            android:layout_toStartOf="@+id/play_pause"
-            android:layout_toLeftOf="@+id/play_pause"
+            android:layout_toEndOf="@id/selectedTrackAlbumArt"
+            android:layout_toRightOf="@id/selectedTrackAlbumArt"
+            android:layout_toStartOf="@+id/selectedTrackPause"
+            android:layout_toLeftOf="@+id/selectedTrackPause"
             android:layout_centerVertical="true">
         <TextView
-                android:id="@+id/title"
+                android:id="@+id/selectedTrackName"
                 tools:text="The Best Music EVAH1111 THE BEST"
                 android:ellipsize="end"
                 android:maxLines="1"
@@ -40,18 +40,9 @@
                 android:contentDescription="@string/currently_playing"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="?android:attr/textColorPrimary"/>
-        <TextView
-                android:id="@+id/artist"
-                tools:text="John Doe and Band"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/currently_playing"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
     </LinearLayout>
     <ImageButton
-            android:id="@+id/play_pause"
+            android:id="@+id/selectedTrackPause"
             android:layout_centerVertical="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

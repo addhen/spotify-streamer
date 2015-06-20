@@ -9,32 +9,25 @@ public class PlaybackState {
 
     private Exception mException;
 
-    public long updateTime;
+    public int currentlyPlaying;
 
-    public int position;
-
-    public int duration;
-
-    public PlaybackState(@NonNull State state, int position, long updateTime, int duration,
+    public PlaybackState(@NonNull State state, int currentlyPlaying,
             @Nullable Exception exception) {
         this.state = state;
-        this.position = position;
-        this.updateTime = updateTime;
-        this.duration = duration;
+        this.currentlyPlaying = currentlyPlaying;
         mException = exception;
     }
 
     public PlaybackState() {
-        this(State.LOADING, 0, 0, 0, null);
+        this(State.LOADING, 0, null);
     }
 
-    public PlaybackState sendState(@NonNull State state, int position, long updateTime,
-            int duration) {
-        return new PlaybackState(state, position, updateTime, duration, null);
+    public PlaybackState sendState(@NonNull State state, int currentlyPlaying) {
+        return new PlaybackState(state, currentlyPlaying, null);
     }
 
     public PlaybackState sendState(@NonNull State state, @Nullable Exception exception) {
-        return new PlaybackState(state, 0, 0, 0, exception);
+        return new PlaybackState(state, 0, exception);
     }
 
     public PlaybackState sendState(@NonNull State state) {

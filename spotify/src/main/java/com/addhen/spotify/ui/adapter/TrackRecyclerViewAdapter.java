@@ -3,11 +3,9 @@ package com.addhen.spotify.ui.adapter;
 import com.addhen.spotify.R;
 import com.addhen.spotify.databinding.TrackListItemBinding;
 import com.addhen.spotify.model.TrackModel;
-import com.addhen.spotify.ui.activity.PlaybackActivity;
 import com.squareup.picasso.Picasso;
 
 import android.content.Context;
-import android.content.Intent;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.Drawable;
@@ -78,15 +76,6 @@ public class TrackRecyclerViewAdapter
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final TrackModel trackModel = mTrackList.get(position);
         holder.bindData(trackModel);
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Context context = v.getContext();
-                Intent intent = PlaybackActivity
-                        .getIntent(context, (ArrayList) mTrackList, position);
-                context.startActivity(intent);
-            }
-        });
     }
 
     /**

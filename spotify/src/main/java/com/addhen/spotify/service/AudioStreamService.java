@@ -16,11 +16,14 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.wifi.WifiManager;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 public class AudioStreamService extends Service
@@ -52,6 +55,12 @@ public class AudioStreamService extends Service
     private int mTrackModelListIndex;
 
     private PlaybackNotificationManager mPlaybackNotificationManager;
+
+    private static final int STOP_DELAY = 30000;
+
+    private DelayedStopHandler mDelayedStopHandler = new DelayedStopHandler(this);
+
+    private boolean mServiceStarted;
 
     synchronized private static PowerManager.WakeLock getPhoneWakeLock(
             Context context) {
@@ -162,10 +171,13 @@ public class AudioStreamService extends Service
         BusProvider.getInstance().unregister(this);
         mPlaybackNotificationManager.unregisterEvent();
         mPlaybackNotificationManager.stopNotification();
+        mDelayedStopHandler.removeCallbacksAndMessages(null);
+        mDelayedStopHandler.sendEmptyMessageDelayed(0, STOP_DELAY);
         if (mMediaPlayer != null) {
             mMediaPlayer.reset();
             mMediaPlayer.release();
         }
+        mDelayedStopHandler.removeCallbacksAndMessages(null);
     }
 
     @Nullable
@@ -179,7 +191,7 @@ public class AudioStreamService extends Service
         if (what == MediaPlayer.MEDIA_INFO_BUFFERING_START) {
             updateState(mPlaybackState.sendState(State.BUFFERING));
         } else if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END) {
-            updateState(mPlaybackState.sendState(State.PLAYING));
+            updateState(mPlaybackState.sendState(State.PLAYING, mCurrentPlayingTrack));
         }
         return false;
     }
@@ -194,6 +206,10 @@ public class AudioStreamService extends Service
     @Override
     public void onCompletion(MediaPlayer mp) {
         updateState(mPlaybackState.sendState(State.STOPPED));
+        mDelayedStopHandler.removeCallbacksAndMessages(null);
+        mDelayedStopHandler.sendEmptyMessageDelayed(0, STOP_DELAY);
+        stopSelf();
+        mServiceStarted = false;
     }
 
     @Override
@@ -206,16 +222,21 @@ public class AudioStreamService extends Service
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-        updateState(mPlaybackState.sendState(State.PLAYING));
+        updateState(mPlaybackState.sendState(State.PLAYING, mCurrentPlayingTrack));
         mp.start();
     }
 
     public void playTrack() {
+        mDelayedStopHandler.removeCallbacksAndMessages(null);
+        if (!mServiceStarted) {
+            startService(new Intent(getApplicationContext(), AudioStreamService.class));
+            mServiceStarted = true;
+        }
         if (mMediaPlayer.isPlaying()) {
             pauseTrack();
             return;
         }
-        updateState(mPlaybackState.sendState(State.PLAYING));
+        updateState(mPlaybackState.sendState(State.PLAYING, mCurrentPlayingTrack));
         mMediaPlayer.start();
     }
 
@@ -223,6 +244,8 @@ public class AudioStreamService extends Service
         if (mMediaPlayer.isPlaying()) {
             mMediaPlayer.pause();
             updateState(mPlaybackState.sendState(State.PAUSED));
+            mDelayedStopHandler.removeCallbacksAndMessages(null);
+            mDelayedStopHandler.sendEmptyMessageDelayed(0, STOP_DELAY);
         }
     }
 
@@ -250,7 +273,7 @@ public class AudioStreamService extends Service
         }
     }
 
-    private void playSong(int trackModelListIndex) {
+    private void updateTrack(int trackModelListIndex) {
         mCurrentPlayingTrack = trackModelListIndex;
         setTrack(mTrackModelList.get(mCurrentPlayingTrack));
     }
@@ -265,22 +288,22 @@ public class AudioStreamService extends Service
 
     public void playNextTrack() {
         if (mCurrentPlayingTrack < (mTrackModelList.size() - 1)) {
-            playSong(mCurrentPlayingTrack + 1);
+            updateTrack(mCurrentPlayingTrack + 1);
             mCurrentPlayingTrack = mCurrentPlayingTrack + 1;
         } else {
-            playSong(mTrackModelListIndex);
+            updateTrack(mTrackModelListIndex);
         }
-        updateState(mPlaybackState.sendState(State.SKIPPED_NEXT));
+        updateState(mPlaybackState.sendState(State.SKIPPED_NEXT, mCurrentPlayingTrack));
     }
 
     public void playPreviousTrack() {
         if (mCurrentPlayingTrack > 0) {
-            playSong(mCurrentPlayingTrack - 1);
+            updateTrack(mCurrentPlayingTrack - 1);
             mCurrentPlayingTrack = mCurrentPlayingTrack - 1;
         } else {
-            playSong(mTrackModelListIndex);
+            updateTrack(mTrackModelListIndex);
         }
-        updateState(mPlaybackState.sendState(State.SKIPPED_PREVIOUS));
+        updateState(mPlaybackState.sendState(State.SKIPPED_PREVIOUS, mCurrentPlayingTrack));
     }
 
     @Produce
@@ -290,5 +313,32 @@ public class AudioStreamService extends Service
 
     private void updateState(PlaybackState playbackState) {
         BusProvider.getInstance().post(playbackState);
+    }
+
+    /**
+     * Makes sense to offer some form of self stopping mechanism so when there is no music playing
+     * for a while the service self stops.
+     *
+     * Credits:https://goo.gl/9KZQon
+     */
+    private static class DelayedStopHandler extends Handler {
+
+        private final WeakReference<AudioStreamService> mWeakReference;
+
+        private DelayedStopHandler(AudioStreamService service) {
+            mWeakReference = new WeakReference<>(service);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            AudioStreamService service = mWeakReference.get();
+            if (service != null && service.mPlaybackState != null) {
+                if (service.mPlaybackState.isPlaying()) {
+                    return;
+                }
+                service.stopSelf();
+                service.mServiceStarted = false;
+            }
+        }
     }
 }
