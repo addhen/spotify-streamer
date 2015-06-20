@@ -85,6 +85,7 @@ public class PlaybackActivity extends BaseActivity {
             }
         }
         setupIntent(savedInstanceState);
+        startAudioService((ArrayList) mTrackModelList, mTrackModelListIndex);
     }
 
     private void setupIntent(@Nullable Bundle savedInstanceState) {
@@ -120,7 +121,6 @@ public class PlaybackActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         BusProvider.getInstance().register(this);
-        startAudioService((ArrayList) mTrackModelList, mTrackModelListIndex);
     }
 
     @Override
@@ -128,13 +128,14 @@ public class PlaybackActivity extends BaseActivity {
         super.onDestroy();
         mPlaybackFragment.setTrackModel(mTrackModelList, mTrackModelListIndex);
         mPlaybackFragment.setAudioStreamService(mAudioStreamService);
+        unbindService(mConnection);
+        stopService(mMusicServiceIntent);
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        unbindService(mConnection);
-        stopService(mMusicServiceIntent);
+    protected void onStop() {
+        super.onStop();
+
     }
 
     private void startAudioService(ArrayList<TrackModel> trackModels, int index) {

@@ -22,9 +22,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
-import android.support.v4.media.MediaMetadataCompat;
-import android.support.v4.media.session.MediaControllerCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.app.NotificationCompat;
 
 import java.util.ArrayList;
@@ -124,7 +121,6 @@ public class PlaybackNotificationManager extends BroadcastReceiver {
 
     public void startNotification() {
         if (!mStarted) {
-            mPlaybackState = mAudioStreamService.produceLastState();
             Notification notification = createNotification();
             if (notification != null) {
                 IntentFilter filter = new IntentFilter();
@@ -136,6 +132,13 @@ public class PlaybackNotificationManager extends BroadcastReceiver {
                 mAudioStreamService.startForeground(NOTIFICATION_ID, notification);
                 mStarted = true;
             }
+        }
+    }
+
+    public void updateNotification() {
+        Notification notification = createNotification();
+        if (notification != null) {
+            mNotificationManager.notify(NOTIFICATION_ID, notification);
         }
     }
 
@@ -151,26 +154,6 @@ public class PlaybackNotificationManager extends BroadcastReceiver {
         }
         mAudioStreamService.stopForeground(true);
     }
-
-    private final MediaControllerCompat.Callback mCb = new MediaControllerCompat.Callback() {
-        @Override
-        public void onPlaybackStateChanged(PlaybackStateCompat state) {
-            super.onPlaybackStateChanged(state);
-            // Do nothing
-        }
-
-        @Override
-        public void onMetadataChanged(MediaMetadataCompat metadata) {
-            super.onMetadataChanged(metadata);
-            // Do nothing
-        }
-
-        @Override
-        public void onSessionDestroyed() {
-            super.onSessionDestroyed();
-            // Do nothing
-        }
-    };
 
     private Notification createNotification() {
 
@@ -268,9 +251,11 @@ public class PlaybackNotificationManager extends BroadcastReceiver {
         switch (playbackState.state) {
             case PLAYING:
             case PAUSED:
+                startNotification();
+                break;
             case SKIPPED_NEXT:
             case SKIPPED_PREVIOUS:
-                startNotification();
+                updateNotification();
                 break;
             case STOPPED:
                 stopNotification();

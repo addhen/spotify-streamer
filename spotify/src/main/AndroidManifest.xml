@@ -24,6 +24,7 @@
         <activity
                 android:name=".ui.activity.TrackActivity"
                 android:label="@string/ab_title_track"
+                android:launchMode="singleTask"
                 android:parentActivityName=".ui.activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
@@ -37,14 +38,15 @@
                 android:name=".ui.activity.PlaybackActivity"
                 android:label="@string/now_playing"
                 android:theme="@style/AppTheme.PopupActivity"
-                android:parentActivityName=".ui.activity.PlaybackActivity">
+                android:launchMode="singleTask"
+                android:parentActivityName=".ui.activity.TrackActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".ui.activity.PlaybackActivity"/>
+                    android:value=".ui.activity.TrackActivity"/>
         </activity>
         <activity
                 android:name=".ui.activity.SettingsActivity"

@@ -1,9 +1,9 @@
 package com.addhen.spotify.ui.fragment;
 
 import com.addhen.spotify.R;
-import com.addhen.spotify.ui.adapter.TrackRecyclerViewAdapter;
 import com.addhen.spotify.model.TrackModel;
 import com.addhen.spotify.presenter.TrackPresenter;
+import com.addhen.spotify.ui.adapter.TrackRecyclerViewAdapter;
 import com.addhen.spotify.util.Utils;
 import com.addhen.spotify.view.TrackView;
 
@@ -97,6 +97,12 @@ public class TrackFragment extends BaseFragment implements TrackView {
         recyclerView.setAdapter(mTrackRecyclerViewAdapter);
         if (!Utils.isEmpty(mTrackList)) {
             mTrackRecyclerViewAdapter.setAdapterItems(mTrackList);
+        }
+    }
+
+    public void clearItems() {
+        if (mTrackRecyclerViewAdapter != null) {
+            mTrackRecyclerViewAdapter.clearAllItems();
         }
     }
 

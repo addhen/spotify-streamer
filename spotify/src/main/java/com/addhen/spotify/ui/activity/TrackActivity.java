@@ -5,7 +5,6 @@ import com.addhen.spotify.ui.fragment.TrackFragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 public class TrackActivity extends BaseActivity {
@@ -35,7 +34,7 @@ public class TrackActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setupFragment(getIntent(), savedInstanceState);
+        setupFragment(savedInstanceState);
     }
 
     @Override
@@ -55,16 +54,17 @@ public class TrackActivity extends BaseActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        setupFragment(intent, null);
+        setIntent(intent);
     }
 
-    private void setupFragment(@NonNull Intent intent, @Nullable Bundle savedInstanceState) {
+    private void setupFragment(@Nullable Bundle savedInstanceState) {
+
         if (savedInstanceState != null) {
             mArtistId = savedInstanceState.getString(BUNDLE_STATE_PARAM_ARTIST_ID);
             mArtistName = savedInstanceState.getString(BUNDLE_STATE_PARAM_ARTIST_NAME);
         } else {
-            mArtistId = intent.getStringExtra(INTENT_EXTRA_ARTIST_ID);
-            mArtistName = intent.getStringExtra(INTENT_EXTRA_ARTIST_NAME);
+            mArtistId = getIntent().getStringExtra(INTENT_EXTRA_ARTIST_ID);
+            mArtistName = getIntent().getStringExtra(INTENT_EXTRA_ARTIST_NAME);
         }
         setSubTitle(mArtistName);
         mTrackFragment = (TrackFragment) getFragmentManager().findFragmentByTag(FRAG_TAG);

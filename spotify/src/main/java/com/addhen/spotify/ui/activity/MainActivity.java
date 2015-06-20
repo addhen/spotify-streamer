@@ -2,11 +2,11 @@ package com.addhen.spotify.ui.activity;
 
 import com.addhen.spotify.BusProvider;
 import com.addhen.spotify.R;
-import com.addhen.spotify.ui.fragment.ArtistFragment;
-import com.addhen.spotify.ui.fragment.TrackFragment;
 import com.addhen.spotify.model.ArtistModel;
 import com.addhen.spotify.state.ArtistEvent;
 import com.addhen.spotify.state.SearchClearedEvent;
+import com.addhen.spotify.ui.fragment.ArtistFragment;
+import com.addhen.spotify.ui.fragment.TrackFragment;
 import com.addhen.spotify.util.Utils;
 import com.squareup.otto.Subscribe;
 
@@ -27,6 +27,8 @@ public class MainActivity extends BaseActivity {
     private static final String FRAG_TAG = "artist";
 
     private List<ArtistModel> mArtistModelList;
+
+    private TrackFragment mTrackFragment;
 
     public MainActivity() {
         super(R.layout.activity_main, R.menu.menu_main);
@@ -106,8 +108,8 @@ public class MainActivity extends BaseActivity {
     }
 
     private void replaceTrackFrag(String artistId) {
-        replaceFragment(R.id.add_track_fragment_container,
-                TrackFragment.newInstance(artistId), "tracks");
+        mTrackFragment = TrackFragment.newInstance(artistId);
+        replaceFragment(R.id.add_track_fragment_container, mTrackFragment, "tracks");
     }
 
     @Subscribe
@@ -125,9 +127,9 @@ public class MainActivity extends BaseActivity {
     @Subscribe
     public void searchCleared(SearchClearedEvent event) {
         if (isTwoPane()) {
-            // TODO: Refresh the list instead of making a new request to spotify api when
-            // an artist is empty
-            replaceTrackFrag("");
+            if (mTrackFragment != null) {
+                mTrackFragment.clearItems();
+            }
         }
     }
 }

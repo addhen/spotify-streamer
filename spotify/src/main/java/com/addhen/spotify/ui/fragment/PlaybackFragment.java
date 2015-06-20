@@ -384,6 +384,8 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
             case SKIPPED_PREVIOUS:
                 updateCurrentlyPlayInfo();
                 break;
+            default:
+                stopped();
         }
     }
 }

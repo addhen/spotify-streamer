@@ -110,10 +110,4 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected Intent getParentIntent() {
         return NavUtils.getParentActivityIntent(this);
     }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        getIntent();
-    }
 }

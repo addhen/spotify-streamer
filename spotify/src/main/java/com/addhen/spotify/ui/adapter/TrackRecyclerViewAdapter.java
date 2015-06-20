@@ -1,9 +1,9 @@
 package com.addhen.spotify.ui.adapter;
 
 import com.addhen.spotify.R;
-import com.addhen.spotify.ui.activity.PlaybackActivity;
 import com.addhen.spotify.databinding.TrackListItemBinding;
 import com.addhen.spotify.model.TrackModel;
+import com.addhen.spotify.ui.activity.PlaybackActivity;
 import com.squareup.picasso.Picasso;
 
 import android.content.Context;
@@ -50,6 +50,11 @@ public class TrackRecyclerViewAdapter
     public void setAdapterItems(List<TrackModel> trackList) {
         mTrackList.clear();
         mTrackList.addAll(trackList);
+        onDataSetChanged();
+    }
+
+    public void clearAllItems() {
+        mTrackList.clear();
         onDataSetChanged();
     }
 
