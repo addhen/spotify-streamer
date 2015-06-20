@@ -21,11 +21,9 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
-import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.app.NotificationCompat;
 
@@ -70,13 +68,6 @@ public class PlaybackNotificationManager extends BroadcastReceiver {
 
     private PlaybackState mPlaybackState;
 
-    private MediaControllerCompat mController;
-
-    private MediaControllerCompat.TransportControls mTransportControls;
-
-    private MediaSessionCompat.Token mSessionToken;
-
-
     private final Target mTarget = new Target() {
         @Override
         public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
@@ -116,7 +107,6 @@ public class PlaybackNotificationManager extends BroadcastReceiver {
 
     public PlaybackNotificationManager(AudioStreamService audioStreamService) {
         mAudioStreamService = audioStreamService;
-        updateSessionToken();
         mNotificationColor = Color.DKGRAY;
         mNotificationManager = (NotificationManager) audioStreamService
                 .getSystemService(Context.NOTIFICATION_SERVICE);
@@ -137,7 +127,6 @@ public class PlaybackNotificationManager extends BroadcastReceiver {
             mPlaybackState = mAudioStreamService.produceLastState();
             Notification notification = createNotification();
             if (notification != null) {
-                mController.registerCallback(mCb);
                 IntentFilter filter = new IntentFilter();
                 filter.addAction(INTENT_ACTION_NEXT);
                 filter.addAction(INTENT_ACTION_PAUSE);
@@ -153,7 +142,6 @@ public class PlaybackNotificationManager extends BroadcastReceiver {
     public void stopNotification() {
         if (mStarted) {
             mStarted = false;
-            mController.unregisterCallback(mCb);
             try {
                 mNotificationManager.cancel(NOTIFICATION_ID);
                 mAudioStreamService.unregisterReceiver(this);
@@ -164,55 +152,25 @@ public class PlaybackNotificationManager extends BroadcastReceiver {
         mAudioStreamService.stopForeground(true);
     }
 
-    private void updateSessionToken() {
-        MediaSessionCompat.Token freshToken = mAudioStreamService.getSessionToken();
-        if (mSessionToken == null || !mSessionToken.equals(freshToken)) {
-            if (mController != null) {
-                mController.unregisterCallback(mCb);
-            }
-            mSessionToken = freshToken;
-            try {
-                mController = new MediaControllerCompat(mAudioStreamService, mSessionToken);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-            mTransportControls = mController.getTransportControls();
-            if (mStarted) {
-                mController.registerCallback(mCb);
-            }
-        }
-    }
-
     private final MediaControllerCompat.Callback mCb = new MediaControllerCompat.Callback() {
         @Override
         public void onPlaybackStateChanged(PlaybackStateCompat state) {
             super.onPlaybackStateChanged(state);
-            if (mPlaybackState.isStopped()) {
-                stopNotification();
-            } else {
-                showNotification();
-            }
+            // Do nothing
         }
 
         @Override
         public void onMetadataChanged(MediaMetadataCompat metadata) {
             super.onMetadataChanged(metadata);
-            showNotification();
+            // Do nothing
         }
 
         @Override
         public void onSessionDestroyed() {
             super.onSessionDestroyed();
-            updateSessionToken();
+            // Do nothing
         }
     };
-
-    private void showNotification() {
-        Notification notification = createNotification();
-        if (notification != null) {
-            mNotificationManager.notify(NOTIFICATION_ID, notification);
-        }
-    }
 
     private Notification createNotification() {
 
@@ -239,7 +197,7 @@ public class PlaybackNotificationManager extends BroadcastReceiver {
         }
         mNotificationBuilder
                 .setStyle(new NotificationCompat.MediaStyle().setShowActionsInCompactView(
-                        new int[]{playPauseButtonPosition}).setMediaSession(mSessionToken))
+                        new int[]{playPauseButtonPosition}).setMediaSession(null))
                 .setColor(mNotificationColor)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setUsesChronometer(true)
@@ -307,10 +265,16 @@ public class PlaybackNotificationManager extends BroadcastReceiver {
             return;
         }
         mPlaybackState = playbackState;
-        if (playbackState.isStopped()) {
-            stopNotification();
-        } else {
-            showNotification();
+        switch (playbackState.state) {
+            case PLAYING:
+            case PAUSED:
+            case SKIPPED_NEXT:
+            case SKIPPED_PREVIOUS:
+                startNotification();
+                break;
+            case STOPPED:
+                stopNotification();
+                break;
         }
     }
 

@@ -9,9 +9,7 @@ import com.addhen.spotify.state.State;
 import com.addhen.spotify.ui.notification.PlaybackNotificationManager;
 import com.squareup.otto.Produce;
 
-import android.app.PendingIntent;
 import android.app.Service;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -21,7 +19,6 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
-import android.support.v4.media.session.MediaSessionCompat;
 
 import java.io.IOException;
 import java.util.List;
@@ -53,11 +50,6 @@ public class AudioStreamService extends Service
     private List<TrackModel> mTrackModelList;
 
     private int mTrackModelListIndex;
-
-    public static final String ACTION_MEDIA_BUTTONS
-            = "com.addhen.spotify.servcie.ACTION_MEDIA_BUTTONS";
-
-    private MediaSessionCompat mSession;
 
     private PlaybackNotificationManager mPlaybackNotificationManager;
 
@@ -131,20 +123,6 @@ public class AudioStreamService extends Service
         mMediaPlayer.setOnPreparedListener(this);
         mMediaPlayer.setOnErrorListener(this);
         mMediaPlayer.setOnCompletionListener(this);
-
-        // Start a new MediaSession
-        ComponentName eventReceiver = new ComponentName(getPackageName(),
-                PlaybackNotificationManager.class.getName());
-        PendingIntent buttonReceiverIntent = PendingIntent.getBroadcast(
-                this,
-                0,
-                new Intent(ACTION_MEDIA_BUTTONS),
-                PendingIntent.FLAG_UPDATE_CURRENT
-        );
-        mSession = new MediaSessionCompat(this, TAG, eventReceiver, buttonReceiverIntent);
-        mSession.setCallback(new MediaSessionCallback());
-        mSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
-                MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
         mPlaybackNotificationManager = new PlaybackNotificationManager(this);
         mPlaybackNotificationManager.registerEvent();
     }
@@ -172,7 +150,7 @@ public class AudioStreamService extends Service
 
     @Override
     public void onDestroy() {
-        // release resources
+        // Release resources
         if (getPhoneWifiLock(this.getApplicationContext()).isHeld()
                 && getPhoneWifiLock(this.getApplicationContext()) != null) {
             getPhoneWifiLock(this.getApplicationContext()).release();
@@ -188,7 +166,6 @@ public class AudioStreamService extends Service
             mMediaPlayer.reset();
             mMediaPlayer.release();
         }
-        mSession.release();
     }
 
     @Nullable
@@ -223,14 +200,14 @@ public class AudioStreamService extends Service
     public boolean onError(MediaPlayer mp, int what, int extra) {
         final Exception error = new Exception(getApplicationContext().getString(
                 R.string.playback_error));
-        BusProvider.getInstance().post(mPlaybackState.sendState(State.ERROR, error));
+        updateState(mPlaybackState.sendState(State.ERROR, error));
         return false;
     }
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-        mp.start();
         updateState(mPlaybackState.sendState(State.PLAYING));
+        mp.start();
     }
 
     public void playTrack() {
@@ -238,8 +215,8 @@ public class AudioStreamService extends Service
             pauseTrack();
             return;
         }
-        mMediaPlayer.start();
         updateState(mPlaybackState.sendState(State.PLAYING));
+        mMediaPlayer.start();
     }
 
     public void pauseTrack() {
@@ -286,10 +263,6 @@ public class AudioStreamService extends Service
         return mTrackModelList;
     }
 
-    public MediaSessionCompat.Token getSessionToken() {
-        return mSession.getSessionToken();
-    }
-
     public void playNextTrack() {
         if (mCurrentPlayingTrack < (mTrackModelList.size() - 1)) {
             playSong(mCurrentPlayingTrack + 1);
@@ -317,43 +290,5 @@ public class AudioStreamService extends Service
 
     private void updateState(PlaybackState playbackState) {
         BusProvider.getInstance().post(playbackState);
-        if (playbackState.isPlaying() || playbackState.isPaused()) {
-            mPlaybackNotificationManager.startNotification();
-        }
-    }
-
-    private final class MediaSessionCallback extends MediaSessionCompat.Callback {
-
-        @Override
-        public void onPlay() {
-            playTrack();
-        }
-
-        @Override
-        public void onSeekTo(long position) {
-            seekTo((int) position);
-        }
-
-        @Override
-        public void onPause() {
-            pauseTrack();
-        }
-
-        @Override
-        public void onStop() {
-            mMediaPlayer.stop();
-            mPlaybackNotificationManager.stopNotification();
-            updateState(mPlaybackState.sendState(State.STOPPED));
-        }
-
-        @Override
-        public void onSkipToNext() {
-            playNextTrack();
-        }
-
-        @Override
-        public void onSkipToPrevious() {
-            playPreviousTrack();
-        }
     }
 }
