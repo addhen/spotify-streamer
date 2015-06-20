@@ -102,8 +102,8 @@ public class TrackFragment extends BaseFragment implements TrackView {
     public void onResume() {
         super.onResume();
         BusProvider.getInstance().register(this);
-        mTrackPresenter.resume();
         updateMediaDescription(mPosition);
+        mTrackPresenter.resume();
     }
 
     @Override
@@ -204,22 +204,23 @@ public class TrackFragment extends BaseFragment implements TrackView {
         return PreferenceManager.getDefaultSharedPreferences(getAppContext());
     }
 
-    private void updateMediaDescription(final int currentlyPlaying) {
+    public void updateMediaDescription(final int currentlyPlaying) {
         if (currentlyPlaying == -1) {
+            mControllerView.setVisibility(View.GONE);
             return;
         }
         final TrackModel trackModel = mTrackList.get(currentlyPlaying);
         mControllerView.setVisibility(View.VISIBLE);
-        mTrackName.setText(trackModel.artistName);
+        mTrackName.setText(trackModel.name);
         Picasso.with(getAppContext()).load(trackModel.coverPhoto)
                 .placeholder(R.drawable.ic_default_music_playing).into(mTrackAlbumArt);
         mControllerView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Context context = v.getContext();
                 Intent intent = PlaybackActivity
-                        .getIntent(context, (ArrayList) mTrackList, currentlyPlaying);
-                context.startActivity(intent);
+                        .getIntent(getActivity(), (ArrayList) mTrackList, currentlyPlaying);
+                getActivity()
+                        .startActivityForResult(intent, PlaybackActivity.PLAYBACK_REQUEST_CODE);
             }
         });
     }

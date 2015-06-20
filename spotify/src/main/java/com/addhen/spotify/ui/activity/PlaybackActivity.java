@@ -36,6 +36,11 @@ public class PlaybackActivity extends BaseActivity {
     private static final String BUNDLE_STATE_PARAM_TRACK_MODEL_LIST_INDEX
             = "com.addhen.spotify.ui.activity.BUNDLE_STATE_PARAM_TRACK_MODEL_LIST_INDEX";
 
+    public static final String INTENT_EXTRA_PARAM_CURRENTLY_PLAYING
+            = "com.addhen.spotify.ui.activity.INTENT_EXTRA_PARAM_CURRENTLY_PLAYING";
+
+    public static final int PLAYBACK_REQUEST_CODE = 1;
+
     private List<TrackModel> mTrackModelList;
 
     private int mTrackModelListIndex;
@@ -124,7 +129,8 @@ public class PlaybackActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         final int id = item.getItemId();
         if (id == R.id.menu_playback_share) {
-            final TrackModel trackModel = mPlaybackFragment.getCurrentlyPlayingSong();
+            final TrackModel trackModel = mTrackModelList.get(
+                    mPlaybackFragment.getCurrentlyPlayingTrack());
             setShareIntent(trackModel);
             return true;
         }
@@ -136,7 +142,8 @@ public class PlaybackActivity extends BaseActivity {
         getMenuInflater().inflate(R.menu.menu_playback, menu);
         MenuItem item = menu.findItem(R.id.menu_playback_share);
         mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
-        final TrackModel trackModel = mPlaybackFragment.getCurrentlyPlayingSong();
+        final TrackModel trackModel = mTrackModelList.get(
+                mPlaybackFragment.getCurrentlyPlayingTrack());
         setShareIntent(trackModel);
         return true;
     }

@@ -352,11 +352,11 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
         }
     }
 
-    public TrackModel getCurrentlyPlayingSong() {
+    public int getCurrentlyPlayingTrack() {
         if (mAudioStreamService != null) {
-            return mTrackModelList.get(mAudioStreamService.getCurrentPlayingTrack());
+            return mAudioStreamService.getCurrentPlayingTrack();
         }
-        return mTrackModelList.get(mTrackModelListIndex);
+        return mTrackModelListIndex;
     }
 
     @Subscribe
@@ -382,6 +382,8 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
             case SKIPPED_PREVIOUS:
                 updateCurrentlyPlayInfo();
                 break;
+            case STOPPED:
+                mTrackModelListIndex = -1;
         }
     }
 
