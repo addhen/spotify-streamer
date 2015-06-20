@@ -188,7 +188,8 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
 
     @Override
     public void loadCoverArt(String url) {
-        Picasso.with(getAppContext()).load(url).into(mBackgroundImage);
+        Picasso.with(getAppContext()).load(url).placeholder(R.drawable.music_loading_bg).into(
+                mBackgroundImage);
     }
 
     @Override
@@ -345,25 +346,12 @@ public class PlaybackFragment extends BaseFragment implements PlaybackView {
     }
 
     private void playNextTrack() {
-        /*if (mCurrentPlayingSong < (mTrackModelList.size() - 1)) {
-            updateCurrentlyPlayInfo(mCurrentPlayingSong + 1);
-            mCurrentPlayingSong = mCurrentPlayingSong + 1;
-        } else {
-            updateCurrentlyPlayInfo(mTrackModelListIndex);
-        }*/
         if (mAudioStreamService != null) {
             mAudioStreamService.playNextTrack();
         }
     }
 
     private void playPreviousTrack() {
-        /*if (mCurrentPlayingSong > 0) {
-            updateCurrentlyPlayInfo(mCurrentPlayingSong - 1);
-            mCurrentPlayingSong = mCurrentPlayingSong - 1;
-        } else {
-            // Play the original index of the song passed from the intent.
-            updateCurrentlyPlayInfo(mTrackModelListIndex);
-        }*/
         if (mAudioStreamService != null) {
             mAudioStreamService.playPreviousTrack();
         }

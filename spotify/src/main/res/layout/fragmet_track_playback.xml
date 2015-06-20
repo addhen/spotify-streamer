@@ -10,6 +10,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
+            android:src="@drawable/music_loading_bg"
             android:contentDescription="@string/playback_background"/>
     <RelativeLayout
             android:layout_width="match_parent"
@@ -20,25 +21,21 @@
         <TextView
                 android:id="@+id/playbackAlbumName"
                 style="@style/PlaybackInfo"
-                android:text="Cold Play"
                 android:textColor="@color/grey_light"
                 android:layout_above="@+id/playbackTrackName"/>
         <TextView
                 android:id="@+id/playbackTrackName"
                 style="@style/PlaybackInfo"
-                android:text="Kelly Playing"
                 android:textColor="@color/grey_dark"
                 android:layout_above="@+id/playbackTrackArtistName"/>
         <TextView
                 android:id="@+id/playbackTrackArtistName"
                 style="@style/PlaybackInfo"
-                android:text="Kate Chapman"
                 android:textColor="@color/grey_dark"
                 android:layout_above="@+id/playbackStatusInfo"/>
         <TextView
                 android:id="@+id/playbackStatusInfo"
                 style="@style/PlaybackInfo"
-                android:text="Loading.."
                 android:textColor="@color/grey_dark"
                 android:layout_above="@+id/controllers"/>
         <LinearLayout
