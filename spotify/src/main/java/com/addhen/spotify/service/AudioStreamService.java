@@ -7,6 +7,7 @@ import com.addhen.spotify.model.TrackModel;
 import com.addhen.spotify.state.PlaybackState;
 import com.addhen.spotify.state.State;
 import com.addhen.spotify.ui.notification.PlaybackNotificationManager;
+import com.addhen.spotify.util.Utils;
 import com.squareup.otto.Produce;
 
 import android.app.Service;
@@ -103,9 +104,11 @@ public class AudioStreamService extends Service
                     .getParcelableArrayListExtra(INTENT_EXTRA_PARAM_TRACK_MODEL_LIST);
             mTrackModelListIndex = intent.getIntExtra(INTENT_EXTRA_PARAM_TRACK_MODEL_LIST_INDEX, 0);
             mCurrentPlayingTrack = mTrackModelListIndex;
-            final TrackModel trackModel = mTrackModelList.get(mCurrentPlayingTrack);
-            mPlaybackState = new PlaybackState();
-            setTrack(trackModel);
+            if (!Utils.isEmpty(mTrackModelList)) {
+                final TrackModel trackModel = mTrackModelList.get(mCurrentPlayingTrack);
+                mPlaybackState = new PlaybackState();
+                setTrack(trackModel);
+            }
         }
     }
 
@@ -222,6 +225,7 @@ public class AudioStreamService extends Service
 
     @Override
     public void onPrepared(MediaPlayer mp) {
+        mServiceStarted = true;
         updateState(mPlaybackState.sendState(State.PLAYING, mCurrentPlayingTrack));
         mp.start();
     }
