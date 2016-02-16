@@ -5,7 +5,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/playback_controls_padding"
-                android:background="@color/error_color"
+                android:background="@color/red_dark"
                 android:layout_gravity="bottom"
                 android:visibility="gone"
                 android:layout_alignParentBottom="true"
